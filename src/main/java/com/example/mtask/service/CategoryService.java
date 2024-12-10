@@ -10,9 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
 import java.util.UUID;
 
 import static com.example.mtask.entity.LogoType.CATEGORY;
@@ -25,7 +25,6 @@ public class CategoryService {
     private final CategoryAsm asm;
     private final MinioService minioService;
 
-
     @Autowired
     public CategoryService(CategoryRepository repository, CategoryAsm asm, MinioService minioService) {
         this.repository = repository;
@@ -33,6 +32,7 @@ public class CategoryService {
         this.minioService = minioService;
     }
 
+    @Transactional
     public CategoryDto createCategory(String name, MultipartFile logoFile) throws FileUploadException {
         String logoUrl = null;
 
@@ -48,11 +48,15 @@ public class CategoryService {
         return asm.toDto(category);
     }
 
+    @Transactional(readOnly = true)
     public CategoryDto getCategoryById(UUID id) {
-        var foundEntity = repository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with id " + id));
-
+        var foundEntity = getCategoryByIdInternal(id);
         return asm.toDto(foundEntity);
+    }
+
+    @Transactional(readOnly = true)
+    public Category getCategoryEntityById(UUID id) {
+        return getCategoryByIdInternal(id);
     }
 
     //    // Пошук категорій за назвою
@@ -69,7 +73,7 @@ public class CategoryService {
 //        return categoryRepository.save(existingCategory);
 //    }
 
-
+    @Transactional
     public void deleteCategory(UUID id) {
         var category = repository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Category not found with id " + id));
@@ -81,6 +85,7 @@ public class CategoryService {
         repository.delete(category);
     }
 
+    @Transactional(readOnly = true)
     public Page<CategoryDto> getPaginatedCategories(int page, int size) {
         var pageable = PageRequest.of(page, size);
         var categoryPage = repository.findAll(pageable);
@@ -88,6 +93,7 @@ public class CategoryService {
         return categoryPage.map(asm::toDto);
     }
 
+    @Transactional(readOnly = true)
     public byte[] getCategoryLogo(UUID categoryId) {
         var logoPath = getCategoryById(categoryId).getLogoUrl();
 
@@ -96,5 +102,10 @@ public class CategoryService {
         }
 
         return minioService.downloadLogo(logoPath, CATEGORY);
+    }
+
+    private Category getCategoryByIdInternal(UUID id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id " + id));
     }
 }

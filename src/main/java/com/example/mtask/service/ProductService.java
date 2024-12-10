@@ -3,12 +3,10 @@ package com.example.mtask.service;
 import com.example.mtask.dto.ProductDto;
 import com.example.mtask.entity.Product;
 import com.example.mtask.mapper.ProductAsm;
-import com.example.mtask.repository.CategoryRepository;
 import com.example.mtask.repository.ProductRepository;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,21 +19,19 @@ import static com.example.mtask.entity.LogoType.PRODUCT;
 public class ProductService {
 
     private final ProductRepository productRepository;
-    //TODO probably change it for service
-    private final CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
     private final MinioService minioService;
     private final ProductAsm productAsm;
 
-    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository, MinioService minioService, ProductAsm productAsm) {
+    public ProductService(ProductRepository productRepository, CategoryService categoryService, MinioService minioService, ProductAsm productAsm) {
         this.productRepository = productRepository;
-        this.categoryRepository = categoryRepository;
+        this.categoryService = categoryService;
         this.minioService = minioService;
         this.productAsm = productAsm;
     }
 
     public ProductDto createProduct(String name, UUID categoryId, MultipartFile logoFile) throws FileUploadException {
-        var category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+        var category = categoryService.getCategoryEntityById(categoryId);
 
         //TODO use var instead?
         String logoPath = null;
@@ -62,27 +58,25 @@ public class ProductService {
     }
 
     public ProductDto updateProduct(UUID id, String name, UUID categoryId, MultipartFile logoFile) throws FileUploadException {
-        Product product = getProductById(id);
+        var product = getProductById(id);
 
-        //TODO check uniq
         if (name != null && !name.isEmpty()) {
             product.setName(name);
         }
 
 
         if (categoryId != null) {
-            var category = categoryRepository.findById(categoryId);
-            category.ifPresent(product::setCategory);
+            var category = categoryService.getCategoryEntityById(categoryId);
+            product.setCategory(category);
         }
 
         if (logoFile != null && !logoFile.isEmpty()) {
-            // Якщо логотип вже існує, видаляємо його з MinIO
-            //TODO краще спочатку спробувати зберегти, і якщо все окей, то видалити
+            //TODO а як сам логотип видалити?
+            var logoPath = minioService.uploadLogo(logoFile, PRODUCT);
             if (product.getLogoUrl() != null) {
                 minioService.deleteLogo(product.getLogoUrl(), PRODUCT);
             }
-            String logoPath = minioService.uploadLogo(logoFile, PRODUCT); // Завантаження нового логотипу
-            product.setLogoUrl(logoPath); // Оновлюємо шлях до нового логотипу
+            product.setLogoUrl(logoPath);
         }
 
         var savedEntity = productRepository.save(product);
@@ -90,7 +84,7 @@ public class ProductService {
     }
 
     public void deleteProduct(UUID id) {
-        Product product = getProductById(id);
+        var product = getProductById(id);
 
         if (product.getLogoUrl() != null) {
             minioService.deleteLogo(product.getLogoUrl(), PRODUCT);
@@ -129,8 +123,8 @@ public class ProductService {
     }
 
     public Page<ProductDto> getPaginatedProducts(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<Product> productPage = productRepository.findAll(pageable);
+        var pageable = PageRequest.of(page, size);
+        var productPage = productRepository.findAll(pageable);
 
         return productPage.map(productAsm::toDto);
     }

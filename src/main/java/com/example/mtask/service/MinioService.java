@@ -1,11 +1,12 @@
 package com.example.mtask.service;
 
 import com.example.mtask.entity.LogoType;
-import com.example.mtask.exceptions.LogoDeletionException;
-import com.example.mtask.exceptions.LogoDownloadException;
+import com.example.mtask.exceptions.MinioOperationException;
 import io.minio.*;
 import io.minio.errors.MinioException;
+import jakarta.annotation.PostConstruct;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,26 +20,31 @@ import java.util.UUID;
 @Service
 public class MinioService {
 
-    //TODO separate class with method to return bean?
+    private static final int BUFFER_SIZE = 1024;
+
     private final MinioClient minioClient;
+    private final String defaultBucket;
 
-    public MinioService() {
-        this.minioClient = MinioClient.builder()
-                .endpoint("http://localhost:9000")
-                .credentials("ROOTNAME", "CHANGEME123")
-                .build();
+    public MinioService(MinioClient minioClient, @Value("${minio.default-bucket}") String defaultBucket) {
+        this.minioClient = minioClient;
+        this.defaultBucket = defaultBucket;
+    }
 
-        initializeBuckets();
+    @PostConstruct
+    public void initializeDefaultBucket() {
+        try {
+            if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(defaultBucket).build())) {
+                minioClient.makeBucket(MakeBucketArgs.builder().bucket(defaultBucket).build());
+            }
+        } catch (Exception e) {
+            throw new MinioOperationException("Error initializing default bucket: " + defaultBucket, e);
+        }
     }
 
     public String uploadLogo(MultipartFile file, LogoType logoType) throws FileUploadException {
-        if (!isImage(file)) {
-            throw new IllegalArgumentException("Тільки зображення дозволяються для завантаження.");
-        }
-
+        checkForImage(file);
         try (InputStream is = file.getInputStream()) {
-            //TODO generate name separate method?
-            var objectName = logoType.name().toLowerCase() + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+            var objectName = generateObjectName(file, logoType);
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(logoType.getBucketName())
@@ -55,13 +61,7 @@ public class MinioService {
     }
 
     public void deleteLogo(String fileName, LogoType logoType) {
-        if (fileName == null || fileName.isEmpty()) {
-            throw new IllegalArgumentException("File name cannot be null or empty.");
-        }
-
-        if (logoType == null) {
-            throw new IllegalArgumentException("Logo type cannot be null.");
-        }
+        validateArguments(fileName, logoType);
 
         try {
             minioClient.removeObject(
@@ -70,7 +70,7 @@ public class MinioService {
                             .object(fileName).build()
             );
         } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new LogoDeletionException("Error occurred while deleting logo file: " + fileName, e);
+            throw new MinioOperationException("Error occurred while deleting logo file: " + fileName, e);
         }
     }
 
@@ -89,7 +89,7 @@ public class MinioService {
                         .build())) {
 
             var byteArrayOutputStream = new ByteArrayOutputStream();
-            var buffer = new byte[1024];
+            var buffer = new byte[BUFFER_SIZE];
             int length;
             while ((length = inputStream.read(buffer)) > 0) {
                 byteArrayOutputStream.write(buffer, 0, length);
@@ -97,29 +97,32 @@ public class MinioService {
 
             return byteArrayOutputStream.toByteArray();
         } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new LogoDownloadException("Error occurred while downloading the logo from MinIO.", e);
+            throw new MinioOperationException("Error occurred while downloading the logo from MinIO.", e);
         }
     }
 
     /**
      * Перевірити, чи є файл зображенням.
      *
-     * @return true, якщо це зображення
      */
-    private boolean isImage(MultipartFile file) {
+    private void checkForImage(MultipartFile file) {
         var contentType = file.getContentType();
-        return contentType.startsWith("image/");
+        if(!contentType.startsWith("image/")) {
+            throw new IllegalArgumentException("Only image files are allowed.");
+        }
     }
 
-    private void initializeBuckets() {
-        try {
-            for (var bucketName : LogoType.getAllBucketNames()) {
-                if (!minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build())) {
-                    minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
-                }
-            }
-        } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
-            throw new RuntimeException("Error initializing Minio buckets", e);
+    private String generateObjectName(MultipartFile file, LogoType logoType) {
+        return logoType.name().toLowerCase() + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
+    }
+
+    private void validateArguments(String fileName, LogoType logoType) {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new IllegalArgumentException("File name cannot be null or empty.");
+        }
+
+        if (logoType == null) {
+            throw new IllegalArgumentException("Logo type cannot be null.");
         }
     }
 }

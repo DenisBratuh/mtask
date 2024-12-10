@@ -1,8 +1,0 @@
-package com.example.mtask.exceptions;
-
-public class LogoDeletionException extends RuntimeException {
-
-    public LogoDeletionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-}
