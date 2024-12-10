@@ -22,10 +22,6 @@ public class CategoryDto {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
     }
@@ -38,4 +34,19 @@ public class CategoryDto {
         return logoUrl;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setLogoUrl(String logoUrl) {
+        this.logoUrl = logoUrl;
+    }
+
+    public List<ProductDto> getProductDtoList() {
+        return productDtoList;
+    }
+
+    public void setProductDtoList(List<ProductDto> productDtoList) {
+        this.productDtoList = productDtoList;
+    }
 }

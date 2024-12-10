@@ -2,7 +2,6 @@ package com.example.mtask.controller;
 
 import com.example.mtask.dto.ProductDto;
 import com.example.mtask.service.ProductService;
-import io.minio.errors.MinioException;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -91,7 +89,6 @@ public class ProductController {
     public ResponseEntity<Page<ProductDto>> getPaginatedProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-
         var productPage = productService.getPaginatedProducts(page, size);
         return new ResponseEntity<>(productPage, HttpStatus.OK);
     }

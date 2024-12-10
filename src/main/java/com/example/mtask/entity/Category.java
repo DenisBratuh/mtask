@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 
 import java.util.List;
 import java.util.UUID;
-//    @OneToMany(mappedBy = "category")
-//    private List<Product> cityList;
 
 @Entity
 @Table(name = "category")
@@ -17,6 +15,7 @@ public class Category {
         this.logoUrl = logoUrl;
     }
 
+    @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -24,7 +23,7 @@ public class Category {
     @Column(name = "name")
     private String name;
 
-    //TODO column
+    @Column(name = "logo_url")
     private String logoUrl;
 
     @OneToMany(mappedBy = "category")

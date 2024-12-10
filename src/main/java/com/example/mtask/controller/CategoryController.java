@@ -28,7 +28,6 @@ public class CategoryController {
     public ResponseEntity<CategoryDto> createCategory(@RequestParam String name,
                                                       @RequestParam(required = false) MultipartFile logoFile) throws FileUploadException {
         var createdCategoryDto = categoryService.createCategory(name, logoFile);
-
         return new ResponseEntity<>(createdCategoryDto, HttpStatus.CREATED);
     }
 
@@ -48,7 +47,6 @@ public class CategoryController {
     public ResponseEntity<Page<CategoryDto>> getPaginatedCategories(@RequestParam(defaultValue = "0") int page,
                                                                     @RequestParam(defaultValue = "10") int size) {
         var categoryPage = categoryService.getPaginatedCategories(page, size);
-
         return new ResponseEntity<>(categoryPage, HttpStatus.OK);
     }
 

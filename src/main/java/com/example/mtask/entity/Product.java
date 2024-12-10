@@ -9,18 +9,22 @@ import java.util.UUID;
 @Table(name = "product")
 public class Product {
 
+    @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(name = "name")
     private String name;
 
+    @Column(name = "logo_url")
     private String logoUrl;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
-    private Category category   ;
+    @Column(name = "category_id")
+    private Category category;
 
     public UUID getId() {
         return id;
