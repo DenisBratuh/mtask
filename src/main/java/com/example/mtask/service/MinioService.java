@@ -2,6 +2,7 @@ package com.example.mtask.service;
 
 import com.example.mtask.entity.LogoType;
 import com.example.mtask.exceptions.MinioOperationException;
+import com.example.mtask.utils.ImageUtils;
 import io.minio.*;
 import io.minio.errors.MinioException;
 import jakarta.annotation.PostConstruct;
@@ -17,8 +18,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
 
+import static com.example.mtask.utils.ImageUtils.generateObjectName;
+
 @Service
-public class MinioService {
+public class MinioService implements ImageStorageService{
 
     private static final int BUFFER_SIZE = 1024;
 
@@ -41,10 +44,11 @@ public class MinioService {
         }
     }
 
-    public String uploadLogo(MultipartFile file, LogoType logoType) throws FileUploadException {
-        checkForImage(file);
+    @Override
+    public String uploadImage(MultipartFile file, LogoType logoType) {
+        ImageUtils.checkForImage(file);
         try (InputStream is = file.getInputStream()) {
-            var objectName = generateObjectName(file, logoType);
+            var objectName = ImageUtils.generateObjectName(file, logoType);
             minioClient.putObject(
                     PutObjectArgs.builder()
                             .bucket(logoType.getBucketName())
@@ -56,12 +60,13 @@ public class MinioService {
 
             return objectName;
         } catch (IOException | MinioException | InvalidKeyException | NoSuchAlgorithmException e) {
-            throw new FileUploadException("Error during uploading logo image to MinIO.", e);
+            throw new MinioOperationException("Error during uploading logo image to MinIO.", e);
         }
     }
 
-    public void deleteLogo(String fileName, LogoType logoType) {
-        validateArguments(fileName, logoType);
+    @Override
+    public void deleteImage(String fileName, LogoType logoType) {
+        ImageUtils.validateArguments(fileName, logoType);
 
         try {
             minioClient.removeObject(
@@ -74,18 +79,12 @@ public class MinioService {
         }
     }
 
-
-    /**
-     * Завантажити логотип з MinIO за вказаним шляхом.
-     *
-     * @param logoPath шлях до логотипу у MinIO
-     * @return логотип як масив байт
-     */
-    public byte[] downloadLogo(String logoPath, LogoType logoType) {
+    @Override
+    public byte[] downloadImage(String imagePath, LogoType logoType) {
         try (var inputStream = minioClient.getObject(
                 GetObjectArgs.builder()
                         .bucket(logoType.getBucketName())
-                        .object(logoPath)
+                        .object(imagePath)
                         .build())) {
 
             var byteArrayOutputStream = new ByteArrayOutputStream();
@@ -98,31 +97,6 @@ public class MinioService {
             return byteArrayOutputStream.toByteArray();
         } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
             throw new MinioOperationException("Error occurred while downloading the logo from MinIO.", e);
-        }
-    }
-
-    /**
-     * Перевірити, чи є файл зображенням.
-     *
-     */
-    private void checkForImage(MultipartFile file) {
-        var contentType = file.getContentType();
-        if(!contentType.startsWith("image/")) {
-            throw new IllegalArgumentException("Only image files are allowed.");
-        }
-    }
-
-    private String generateObjectName(MultipartFile file, LogoType logoType) {
-        return logoType.name().toLowerCase() + "/" + UUID.randomUUID() + "_" + file.getOriginalFilename();
-    }
-
-    private void validateArguments(String fileName, LogoType logoType) {
-        if (fileName == null || fileName.isEmpty()) {
-            throw new IllegalArgumentException("File name cannot be null or empty.");
-        }
-
-        if (logoType == null) {
-            throw new IllegalArgumentException("Logo type cannot be null.");
         }
     }
 }
