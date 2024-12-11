@@ -36,7 +36,7 @@ public class ProductService {
         //TODO use var instead?
         String logoPath = null;
         if (logoFile != null && !logoFile.isEmpty()) {
-            logoPath = minioService.uploadLogo(logoFile, PRODUCT);
+            logoPath = minioService.uploadImage(logoFile, PRODUCT);
         }
 
         var product = new Product();
@@ -72,9 +72,9 @@ public class ProductService {
 
         if (logoFile != null && !logoFile.isEmpty()) {
             //TODO а як сам логотип видалити?
-            var logoPath = minioService.uploadLogo(logoFile, PRODUCT);
+            var logoPath = minioService.uploadImage(logoFile, PRODUCT);
             if (product.getLogoUrl() != null) {
-                minioService.deleteLogo(product.getLogoUrl(), PRODUCT);
+                minioService.deleteImage(product.getLogoUrl(), PRODUCT);
             }
             product.setLogoUrl(logoPath);
         }
@@ -87,7 +87,7 @@ public class ProductService {
         var product = getProductById(id);
 
         if (product.getLogoUrl() != null) {
-            minioService.deleteLogo(product.getLogoUrl(), PRODUCT);
+            minioService.deleteImage(product.getLogoUrl(), PRODUCT);
         }
 
         productRepository.delete(product);
@@ -99,7 +99,7 @@ public class ProductService {
             return new byte[0];
         }
 
-        return minioService.downloadLogo(product.getLogoUrl(), PRODUCT);
+        return minioService.downloadImage(product.getLogoUrl(), PRODUCT);
     }
 
     public List<ProductDto> searchProductsByName(String name) {

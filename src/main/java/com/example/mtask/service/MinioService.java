@@ -47,8 +47,8 @@ public class MinioService implements ImageStorageService{
             var objectName = ImageUtils.generateObjectName(file, logoType);
             minioClient.putObject(
                     PutObjectArgs.builder()
-                            .bucket(logoType.getBucketName())
                             .object(objectName)
+                            .bucket(defaultBucket)
                             .stream(is, file.getSize(), -1)
                             .contentType(file.getContentType())
                             .build()
@@ -67,7 +67,7 @@ public class MinioService implements ImageStorageService{
         try {
             minioClient.removeObject(
                     RemoveObjectArgs.builder()
-                            .bucket(logoType.getBucketName())
+                            .bucket(defaultBucket)
                             .object(fileName).build()
             );
         } catch (MinioException | IOException | NoSuchAlgorithmException | InvalidKeyException e) {
@@ -77,10 +77,11 @@ public class MinioService implements ImageStorageService{
 
     @Override
     public byte[] downloadImage(String imagePath, LogoType logoType) {
-        try (var inputStream = minioClient.getObject(
+        try (
+                GetObjectResponse inputStream = minioClient.getObject(
                 GetObjectArgs.builder()
-                        .bucket(logoType.getBucketName())
                         .object(imagePath)
+                        .bucket(defaultBucket)
                         .build())) {
 
             var byteArrayOutputStream = new ByteArrayOutputStream();

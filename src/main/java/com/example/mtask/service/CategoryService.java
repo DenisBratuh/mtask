@@ -33,11 +33,11 @@ public class CategoryService {
     }
 
     @Transactional
-    public CategoryDto createCategory(String name, MultipartFile logoFile) throws FileUploadException {
+    public CategoryDto createCategory(String name, MultipartFile logoFile) {
         String logoUrl = null;
 
         if (logoFile != null && !logoFile.isEmpty()) {
-            logoUrl = minioService.uploadLogo(logoFile, CATEGORY);
+            logoUrl = minioService.uploadImage(logoFile, CATEGORY);
         }
 
         var category = new Category();
@@ -79,7 +79,7 @@ public class CategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found with id " + id));
 
         if (category.getLogoUrl() != null) {
-            minioService.deleteLogo(category.getLogoUrl(), PRODUCT);
+            minioService.deleteImage(category.getLogoUrl(), PRODUCT);
         }
 
         repository.delete(category);
@@ -101,7 +101,7 @@ public class CategoryService {
             return new byte[0];
         }
 
-        return minioService.downloadLogo(logoPath, CATEGORY);
+        return minioService.downloadImage(logoPath, CATEGORY);
     }
 
     private Category getCategoryByIdInternal(UUID id) {
