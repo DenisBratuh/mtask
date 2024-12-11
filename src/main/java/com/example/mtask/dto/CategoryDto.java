@@ -9,13 +9,13 @@ public class CategoryDto {
     private String name;
     //TODO check for update?
     private String logoUrl;
-    private List<ProductDto> productDtoList;
+    private List<ProductSendDto> productSendDtoList;
 
-    public CategoryDto(UUID id, String name, String logoUrl, List<ProductDto> productDtoList) {
+    public CategoryDto(UUID id, String name, String logoUrl, List<ProductSendDto> productSendDtoList) {
         this.id = id;
         this.name = name;
         this.logoUrl = logoUrl;
-        this.productDtoList = productDtoList;
+        this.productSendDtoList = productSendDtoList;
     }
 
     public UUID getId() {
@@ -42,11 +42,11 @@ public class CategoryDto {
         this.logoUrl = logoUrl;
     }
 
-    public List<ProductDto> getProductDtoList() {
-        return productDtoList;
+    public List<ProductSendDto> getProductDtoList() {
+        return productSendDtoList;
     }
 
-    public void setProductDtoList(List<ProductDto> productDtoList) {
-        this.productDtoList = productDtoList;
+    public void setProductDtoList(List<ProductSendDto> productSendDtoList) {
+        this.productSendDtoList = productSendDtoList;
     }
 }

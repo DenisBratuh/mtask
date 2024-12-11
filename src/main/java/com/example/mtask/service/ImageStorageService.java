@@ -1,7 +1,6 @@
 package com.example.mtask.service;
 
 import com.example.mtask.entity.LogoType;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -19,7 +18,6 @@ public interface ImageStorageService {
      * @param file     the image file to upload
      * @param logoType the type of the logo, which determines the storage bucket or folder
      * @return the path or URL of the uploaded image
-     * @throws FileUploadException if an error occurs during the upload process
      */
     String uploadImage(MultipartFile file, LogoType logoType);
 

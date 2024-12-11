@@ -1,131 +1,96 @@
 package com.example.mtask.service;
 
-import com.example.mtask.dto.ProductDto;
-import com.example.mtask.entity.Product;
-import com.example.mtask.mapper.ProductAsm;
-import com.example.mtask.repository.ProductRepository;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import com.example.mtask.dto.ProductRcvDto;
+import com.example.mtask.dto.ProductSendDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.mtask.entity.LogoType.PRODUCT;
+/**
+ * Interface for managing products in the application.
+ * <p>
+ * This interface defines methods for creating, updating, retrieving, searching, 
+ * and deleting products, as well as handling their associated logos.
+ * </p>
+ */
+public interface ProductService {
 
-@Service
-public class ProductService {
+    /**
+     * Creates a new product with the specified details.
+     *
+     * @param name        the name of the product
+     * @param categoryId  the UUID of the category to associate with the product
+     * @param logoFile    the logo file for the product (optional)
+     * @return a {@link ProductSendDto} containing the details of the created product
+     */
+    ProductSendDto createProduct(String name, UUID categoryId, MultipartFile logoFile);
 
-    private final ProductRepository productRepository;
-    private final CategoryService categoryService;
-    private final MinioService minioService;
-    private final ProductAsm productAsm;
+    /**
+     * Retrieves the details of a product by its ID.
+     *
+     * @param id the UUID of the product
+     * @return a {@link ProductSendDto} containing the product's details
+     * @throws RuntimeException if the product with the specified ID is not found
+     */
+    ProductSendDto getProductDtoById(UUID id);
 
-    public ProductService(ProductRepository productRepository, CategoryService categoryService, MinioService minioService, ProductAsm productAsm) {
-        this.productRepository = productRepository;
-        this.categoryService = categoryService;
-        this.minioService = minioService;
-        this.productAsm = productAsm;
-    }
+    //TODO update
+    /**
+     * Updates an existing product with new details.
+     *
+     * @param id          the UUID of the product to update
+     * @return a {@link ProductSendDto} containing the updated product's details
+     */
+    ProductSendDto updateProduct(UUID id, ProductRcvDto updateDto);
 
-    public ProductDto createProduct(String name, UUID categoryId, MultipartFile logoFile) throws FileUploadException {
-        var category = categoryService.getCategoryEntityById(categoryId);
+    /**
+     * Deletes a product by its ID.
+     *
+     * @param id the UUID of the product to delete
+     * @throws RuntimeException if the product with the specified ID is not found
+     */
+    void deleteProduct(UUID id);
 
-        //TODO use var instead?
-        String logoPath = null;
-        if (logoFile != null && !logoFile.isEmpty()) {
-            logoPath = minioService.uploadImage(logoFile, PRODUCT);
-        }
+    /**
+     * Retrieves the logo of a product by its ID.
+     *
+     * @param productId the UUID of the product
+     * @return a byte array containing the content of the logo
+     * @throws RuntimeException if the product or its logo is not found
+     */
+    byte[] getProductLogo(UUID productId);
 
-        var product = new Product();
-        product.setCategory(category);
-        product.setName(name);
-        product.setLogoUrl(logoPath);
+    /**
+     * Searches for products with names that contain the specified string (case-insensitive).
+     *
+     * @param name the string to search for in product names
+     * @return a list of {@link ProductSendDto} matching the search criteria
+     */
+    List<ProductSendDto> searchProductsByName(String name);
 
-        product = productRepository.save(product);
-        return productAsm.toDto(product);
-    }
+    /**
+     * Retrieves all products associated with a specific category name.
+     *
+     * @param name the name of the category
+     * @return a list of {@link ProductSendDto} in the specified category
+     */
+    List<ProductSendDto> getProductsByCategoryName(String name);
 
-    public ProductDto getProductDtoById(UUID id) {
-        return productAsm.toDto(getProductById(id));
-    }
+    /**
+     * Retrieves a list of unique product names.
+     *
+     * @return a list of strings representing the unique product names
+     */
+    List<String> getProductsWithUniqueNames();
 
-    private Product getProductById(UUID id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
-    }
-
-    public ProductDto updateProduct(UUID id, String name, UUID categoryId, MultipartFile logoFile) throws FileUploadException {
-        var product = getProductById(id);
-
-        if (name != null && !name.isEmpty()) {
-            product.setName(name);
-        }
-
-
-        if (categoryId != null) {
-            var category = categoryService.getCategoryEntityById(categoryId);
-            product.setCategory(category);
-        }
-
-        if (logoFile != null && !logoFile.isEmpty()) {
-            //TODO а як сам логотип видалити?
-            var logoPath = minioService.uploadImage(logoFile, PRODUCT);
-            if (product.getLogoUrl() != null) {
-                minioService.deleteImage(product.getLogoUrl(), PRODUCT);
-            }
-            product.setLogoUrl(logoPath);
-        }
-
-        var savedEntity = productRepository.save(product);
-        return productAsm.toDto(savedEntity);
-    }
-
-    public void deleteProduct(UUID id) {
-        var product = getProductById(id);
-
-        if (product.getLogoUrl() != null) {
-            minioService.deleteImage(product.getLogoUrl(), PRODUCT);
-        }
-
-        productRepository.delete(product);
-    }
-
-    public byte[] getProductLogo(UUID productId) {
-        var product = getProductById(productId);
-        if (product.getLogoUrl() == null || product.getLogoUrl().isEmpty()) {
-            return new byte[0];
-        }
-
-        return minioService.downloadImage(product.getLogoUrl(), PRODUCT);
-    }
-
-    public List<ProductDto> searchProductsByName(String name) {
-        var entityList = productRepository.findByNameContainingIgnoreCase(name);
-        return productAsm.toDto(entityList);
-    }
-
-//check
-//    public List<ProductDto> getProductsByCategoryId(UUID categoryId) {
-//        var list = productRepository.findByCategoryId(categoryId);
-//        return productAsm.toDto(list);
-//    }
-
-    public List<ProductDto> getProductsByCategoryName(String name) {
-        var list = productRepository.findByCategoryName(name);
-        return productAsm.toDto(list);
-    }
-
-    public List<String> getProductsWithUniqueNames() {
-        return productRepository.findDistinctProductNames();
-    }
-
-    public Page<ProductDto> getPaginatedProducts(int page, int size) {
-        var pageable = PageRequest.of(page, size);
-        var productPage = productRepository.findAll(pageable);
-
-        return productPage.map(productAsm::toDto);
-    }
+    /**
+     * Retrieves a paginated list of products.
+     *
+     * @param page the page number to retrieve (zero-based index)
+     * @param size the number of products per page
+     * @return a {@link Page} of {@link ProductSendDto} containing the paginated products
+     */
+    Page<ProductSendDto> getPaginatedProducts(int page, int size);
 }

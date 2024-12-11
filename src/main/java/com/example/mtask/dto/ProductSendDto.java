@@ -2,22 +2,24 @@ package com.example.mtask.dto;
 
 import java.util.UUID;
 
-public class ProductDto {
+public class ProductSendDto {
     private UUID id;
     private String name;
-    //todo check
+
     private String logoUrl;
-    //todo check
+
     private UUID categoryId;
 
-    public ProductDto(UUID id, String name, String logoUrl, UUID categoryId) {
+    public ProductSendDto() {
+    }
+
+    public ProductSendDto(UUID id, String name, String logoUrl, UUID categoryId) {
         this.id = id;
         this.name = name;
         this.logoUrl = logoUrl;
         this.categoryId = categoryId;
     }
 
-    // Гетери та сетери
     public UUID getId() {
         return id;
     }

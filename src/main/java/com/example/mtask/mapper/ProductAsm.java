@@ -1,6 +1,6 @@
 package com.example.mtask.mapper;
 
-import com.example.mtask.dto.ProductDto;
+import com.example.mtask.dto.ProductSendDto;
 import com.example.mtask.entity.Product;
 import org.springframework.stereotype.Component;
 
@@ -10,15 +10,15 @@ import java.util.List;
 @Component
 public class ProductAsm {
 
-    public ProductDto toDto(Product entity) {
-        return new ProductDto(
+    public ProductSendDto toDto(Product entity) {
+        return new ProductSendDto(
                 entity.getId(),
                 entity.getName(),
                 entity.getLogoUrl(),
                 entity.getCategory().getId()
         );
     }
-    public List<ProductDto> toDto(List<Product> entityList) {
+    public List<ProductSendDto> toDto(List<Product> entityList) {
         //todo?
         if (entityList == null) {
             return Collections.emptyList();

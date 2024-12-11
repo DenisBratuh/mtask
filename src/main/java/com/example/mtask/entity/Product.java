@@ -23,7 +23,6 @@ public class Product {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
-    @Column(name = "category_id")
     private Category category;
 
     public UUID getId() {

@@ -1,8 +1,8 @@
 package com.example.mtask.controller;
 
-import com.example.mtask.dto.ProductDto;
-import com.example.mtask.service.ProductService;
-import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import com.example.mtask.dto.ProductRcvDto;
+import com.example.mtask.dto.ProductSendDto;
+import com.example.mtask.service.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -18,51 +18,48 @@ import java.util.UUID;
 @RequestMapping("/api/products")
 public class ProductController {
 
-    private final ProductService productService;
+    private final ProductServiceImp productServiceImp;
 
     @Autowired
-    public ProductController(ProductService productService) {
-        this.productService = productService;
+    public ProductController(ProductServiceImp productServiceImp) {
+        this.productServiceImp = productServiceImp;
     }
 
     @PostMapping
-    public ResponseEntity<ProductDto> createProduct(@RequestParam String name,
-                                                    @RequestParam UUID categoryId,
-                                                    @RequestParam(required = false) MultipartFile logoFile) throws FileUploadException {
-        var product = productService.createProduct(name, categoryId, logoFile);
+    public ResponseEntity<ProductSendDto> createProduct(@RequestParam String name,
+                                                        @RequestParam UUID categoryId,
+                                                        @RequestParam(required = false) MultipartFile logoFile) {
+        var product = productServiceImp.createProduct(name, categoryId, logoFile);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductDto> getProduct(@PathVariable UUID id) {
-        var product = productService.getProductDtoById(id);
+    public ResponseEntity<ProductSendDto> getProduct(@PathVariable UUID id) {
+        var product = productServiceImp.getProductDtoById(id);
         return new ResponseEntity<>(product, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProductDto> updateProduct(@PathVariable UUID id,
-                                                    @RequestParam(required = false) String name,
-                                                    @RequestParam(required = false) UUID categoryId,
-                                                    @RequestParam(required = false) MultipartFile logoFile) throws FileUploadException {
-        var updatedProduct = productService.updateProduct(id, name, categoryId, logoFile);
+    public ResponseEntity<ProductSendDto> updateProduct(@PathVariable UUID id, @ModelAttribute ProductRcvDto updateRequest) {
+        var updatedProduct = productServiceImp.updateProduct(id, updateRequest);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProduct(@PathVariable UUID id) {
-        productService.deleteProduct(id);
+        productServiceImp.deleteProduct(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductDto>> searchProducts(@RequestParam String name) {
-        var products = productService.searchProductsByName(name);
+    public ResponseEntity<List<ProductSendDto>> searchProducts(@RequestParam String name) {
+        var products = productServiceImp.searchProductsByName(name);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @GetMapping("/{id}/logo")
     public ResponseEntity<byte[]> getProductLogo(@PathVariable UUID id) {
-        byte[] logo = productService.getProductLogo(id);
+        byte[] logo = productServiceImp.getProductLogo(id);
 
         if (logo == null || logo.length == 0) {
             return ResponseEntity.noContent().build();
@@ -74,22 +71,22 @@ public class ProductController {
     }
 
     @GetMapping("/category/{categoryName}")
-    public ResponseEntity<List<ProductDto>> getProductsByCategory(@PathVariable String categoryName) {
-        var products = productService.getProductsByCategoryName(categoryName);
+    public ResponseEntity<List<ProductSendDto>> getProductsByCategory(@PathVariable String categoryName) {
+        var products = productServiceImp.getProductsByCategoryName(categoryName);
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
     @GetMapping("/unique-names")
     public ResponseEntity<List<String>> getProductsWithUniqueNames() {
-        var uniqueProducts = productService.getProductsWithUniqueNames();
+        var uniqueProducts = productServiceImp.getProductsWithUniqueNames();
         return new ResponseEntity<>(uniqueProducts, HttpStatus.OK);
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductDto>> getPaginatedProducts(
+    public ResponseEntity<Page<ProductSendDto>> getPaginatedProducts(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        var productPage = productService.getPaginatedProducts(page, size);
+        var productPage = productServiceImp.getPaginatedProducts(page, size);
         return new ResponseEntity<>(productPage, HttpStatus.OK);
     }
 }
