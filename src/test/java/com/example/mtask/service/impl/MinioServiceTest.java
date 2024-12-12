@@ -1,4 +1,4 @@
-package com.example.mtask.service;
+package com.example.mtask.service.impl;
 
 import com.example.mtask.entity.LogoType;
 import com.example.mtask.exceptions.MinioOperationException;

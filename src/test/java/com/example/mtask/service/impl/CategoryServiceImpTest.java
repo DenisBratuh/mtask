@@ -1,4 +1,4 @@
-package com.example.mtask.service;
+package com.example.mtask.service.impl;
 
 import com.example.mtask.dto.category.CategoryRcvDto;
 import com.example.mtask.dto.category.CategorySendDto;

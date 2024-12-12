@@ -1,4 +1,4 @@
-package com.example.mtask.service;
+package com.example.mtask.service.impl;
 
 import com.example.mtask.dto.product.ProductCreateDto;
 import com.example.mtask.dto.product.ProductUpdateDto;
