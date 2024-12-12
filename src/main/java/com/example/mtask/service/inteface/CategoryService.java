@@ -1,8 +1,8 @@
 package com.example.mtask.service.inteface;
 
-import com.example.mtask.dto.CategoryDto;
+import com.example.mtask.dto.category.CategoryRcvDto;
+import com.example.mtask.dto.category.CategorySendDto;
 import org.springframework.data.domain.Page;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -15,23 +15,22 @@ import java.util.UUID;
  */
 public interface CategoryService {
 
+    //TODO
     /**
      * Creates a new category with the specified details.
      *
-     * @param name     the name of the category
-     * @param logoFile the logo file for the category (optional)
-     * @return a {@link CategoryDto} containing the details of the created category
+     * @return a {@link CategorySendDto} containing the details of the created category
      */
-    CategoryDto createCategory(String name, MultipartFile logoFile);
+    CategorySendDto createCategory(CategoryRcvDto dto);
 
     /**
      * Retrieves the details of a category by its ID.
      *
      * @param id the UUID of the category
-     * @return a {@link CategoryDto} containing the category's details
+     * @return a {@link CategorySendDto} containing the category's details
      * @throws RuntimeException if the category with the specified ID is not found
      */
-    CategoryDto getCategoryById(UUID id);
+    CategorySendDto getCategoryById(UUID id);
 
     /**
      * Retrieves the entity of a category by its ID.
@@ -55,9 +54,9 @@ public interface CategoryService {
      *
      * @param page the page number to retrieve (zero-based index)
      * @param size the number of categories per page
-     * @return a {@link Page} of {@link CategoryDto} containing the paginated categories
+     * @return a {@link Page} of {@link CategorySendDto} containing the paginated categories
      */
-    Page<CategoryDto> getPaginatedCategories(int page, int size);
+    Page<CategorySendDto> getPaginatedCategories(int page, int size);
 
     /**
      * Retrieves the logo of a category by its ID.

@@ -1,6 +1,7 @@
 package com.example.mtask.service;
 
-import com.example.mtask.dto.CategoryDto;
+import com.example.mtask.dto.category.CategoryRcvDto;
+import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.entity.Category;
 import com.example.mtask.mapper.CategoryAsm;
 import com.example.mtask.repository.CategoryRepository;
@@ -21,6 +22,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.mtask.entity.LogoType.CATEGORY;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -45,20 +47,24 @@ class CategoryServiceImpTest {
         // Given
         String name = "Test Category";
         MultipartFile logoFile = mock(MultipartFile.class);
+        CategoryRcvDto categoryRcvDto = new CategoryRcvDto();
+        categoryRcvDto.setName(name);
+        categoryRcvDto.setFile(logoFile);
+
         Category category = new Category();
-        CategoryDto categoryDto = new CategoryDto();
+        CategorySendDto categorySendDto = new CategorySendDto();
 
         when(logoFile.isEmpty()).thenReturn(false);
-        when(minioService.uploadImage(any(MultipartFile.class), any())).thenReturn("logoPath");
+        when(minioService.uploadImage(any(MultipartFile.class), eq(CATEGORY))).thenReturn("logoPath");
         when(categoryRepository.save(any(Category.class))).thenReturn(category);
-        when(categoryAsm.toDto(category)).thenReturn(categoryDto);
+        when(categoryAsm.toDto(category)).thenReturn(categorySendDto);
 
         // When
-        CategoryDto result = categoryServiceImp.createCategory(name, logoFile);
+        CategorySendDto result = categoryServiceImp.createCategory(categoryRcvDto);
 
         // Then
         assertNotNull(result);
-        verify(minioService, times(1)).uploadImage(any(MultipartFile.class), any());
+        verify(minioService, times(1)).uploadImage(any(MultipartFile.class), eq(CATEGORY));
         verify(categoryRepository, times(1)).save(any(Category.class));
     }
 
@@ -67,13 +73,13 @@ class CategoryServiceImpTest {
         // Given
         UUID id = UUID.randomUUID();
         Category category = new Category();
-        CategoryDto categoryDto = new CategoryDto();
+        CategorySendDto categorySendDto = new CategorySendDto();
 
         when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
-        when(categoryAsm.toDto(category)).thenReturn(categoryDto);
+        when(categoryAsm.toDto(category)).thenReturn(categorySendDto);
 
         // When
-        CategoryDto result = categoryServiceImp.getCategoryById(id);
+        CategorySendDto result = categoryServiceImp.getCategoryById(id);
 
         // Then
         assertNotNull(result);
@@ -135,10 +141,10 @@ class CategoryServiceImpTest {
         Page<Category> categoryPage = new PageImpl<>(Collections.singletonList(new Category()));
 
         when(categoryRepository.findAll(pageable)).thenReturn(categoryPage);
-        when(categoryAsm.toDto(any(Category.class))).thenReturn(new CategoryDto());
+        when(categoryAsm.toDto(any(Category.class))).thenReturn(new CategorySendDto());
 
         // When
-        Page<CategoryDto> result = categoryServiceImp.getPaginatedCategories(page, size);
+        Page<CategorySendDto> result = categoryServiceImp.getPaginatedCategories(page, size);
 
         // Then
         assertNotNull(result);
@@ -155,9 +161,9 @@ class CategoryServiceImpTest {
 
         when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
 
-        CategoryDto categoryDto = new CategoryDto();
-        categoryDto.setLogoUrl("logoPath");
-        when(categoryAsm.toDto(any(Category.class))).thenReturn(categoryDto);
+        CategorySendDto categorySendDto = new CategorySendDto();
+        categorySendDto.setLogoUrl("logoPath");
+        when(categoryAsm.toDto(any(Category.class))).thenReturn(categorySendDto);
 
         when(minioService.downloadImage(eq("logoPath"), any())).thenReturn(new byte[]{1, 2, 3});
 
@@ -178,7 +184,7 @@ class CategoryServiceImpTest {
         category.setLogoUrl(null);
 
         when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
-        when(categoryAsm.toDto(category)).thenReturn(new CategoryDto());
+        when(categoryAsm.toDto(category)).thenReturn(new CategorySendDto());
 
         // When
         byte[] result = categoryServiceImp.getCategoryLogo(id);

@@ -1,4 +1,4 @@
-package com.example.mtask.dto;
+package com.example.mtask.dto.product;
 
 import java.util.UUID;
 

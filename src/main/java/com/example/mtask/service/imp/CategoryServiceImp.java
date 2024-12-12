@@ -1,6 +1,7 @@
 package com.example.mtask.service.imp;
 
-import com.example.mtask.dto.CategoryDto;
+import com.example.mtask.dto.category.CategoryRcvDto;
+import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.entity.Category;
 import com.example.mtask.mapper.CategoryAsm;
 import com.example.mtask.repository.CategoryRepository;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -33,7 +33,10 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Transactional
-    public CategoryDto createCategory(String name, MultipartFile logoFile) {
+    public CategorySendDto createCategory(CategoryRcvDto dto) {
+        var logoFile = dto.getFile();
+        var name = dto.getName();
+
         String logoUrl = null;
 
         if (logoFile != null && !logoFile.isEmpty()) {
@@ -49,7 +52,7 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public CategoryDto getCategoryById(UUID id) {
+    public CategorySendDto getCategoryById(UUID id) {
         var foundEntity = getCategoryByIdInternal(id);
         return asm.toDto(foundEntity);
     }
@@ -72,7 +75,7 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Transactional(readOnly = true)
-    public Page<CategoryDto> getPaginatedCategories(int page, int size) {
+    public Page<CategorySendDto> getPaginatedCategories(int page, int size) {
         var pageable = PageRequest.of(page, size);
         var categoryPage = repository.findAll(pageable);
 

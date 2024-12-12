@@ -1,6 +1,6 @@
 package com.example.mtask.mapper;
 
-import com.example.mtask.dto.CategoryDto;
+import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -15,8 +15,8 @@ public class CategoryAsm {
         this.productAsm = productAsm;
     }
 
-    public CategoryDto toDto(Category entity) {
-        return new CategoryDto(
+    public CategorySendDto toDto(Category entity) {
+        return new CategorySendDto(
                 entity.getId(),
                 entity.getName(),
                 entity.getLogoUrl(),

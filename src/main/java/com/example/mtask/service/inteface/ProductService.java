@@ -1,9 +1,9 @@
 package com.example.mtask.service.inteface;
 
-import com.example.mtask.dto.ProductRcvDto;
-import com.example.mtask.dto.ProductSendDto;
+import com.example.mtask.dto.product.ProductCreateDto;
+import com.example.mtask.dto.product.ProductUpdateDto;
+import com.example.mtask.dto.product.ProductSendDto;
 import org.springframework.data.domain.Page;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,15 +17,13 @@ import java.util.UUID;
  */
 public interface ProductService {
 
+    //TODO update
     /**
      * Creates a new product with the specified details.
      *
-     * @param name        the name of the product
-     * @param categoryId  the UUID of the category to associate with the product
-     * @param logoFile    the logo file for the product (optional)
      * @return a {@link ProductSendDto} containing the details of the created product
      */
-    ProductSendDto createProduct(String name, UUID categoryId, MultipartFile logoFile);
+    ProductSendDto createProduct(ProductCreateDto dto);
 
     /**
      * Retrieves the details of a product by its ID.
@@ -43,7 +41,7 @@ public interface ProductService {
      * @param id          the UUID of the product to update
      * @return a {@link ProductSendDto} containing the updated product's details
      */
-    ProductSendDto updateProduct(UUID id, ProductRcvDto updateDto);
+    ProductSendDto updateProduct(UUID id, ProductUpdateDto updateDto);
 
     /**
      * Deletes a product by its ID.

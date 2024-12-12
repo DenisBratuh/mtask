@@ -1,7 +1,8 @@
 package com.example.mtask.service.imp;
 
-import com.example.mtask.dto.ProductRcvDto;
-import com.example.mtask.dto.ProductSendDto;
+import com.example.mtask.dto.product.ProductCreateDto;
+import com.example.mtask.dto.product.ProductUpdateDto;
+import com.example.mtask.dto.product.ProductSendDto;
 import com.example.mtask.entity.Product;
 import com.example.mtask.mapper.ProductAsm;
 import com.example.mtask.repository.ProductRepository;
@@ -34,7 +35,11 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     @Transactional
-    public ProductSendDto createProduct(String name, UUID categoryId, MultipartFile logoFile) {
+    public ProductSendDto createProduct(ProductCreateDto dto) {
+        var categoryId = dto.getCategoryId();
+        var logoFile = dto.getLogoFile();
+        var name = dto.getName();
+
         var category = categoryServiceImp.getCategoryEntityById(categoryId);
 
         String logoPath = null;
@@ -64,7 +69,7 @@ public class ProductServiceImp implements ProductService {
 
     @Override
     @Transactional
-    public ProductSendDto updateProduct(UUID id, ProductRcvDto updateDto) {
+    public ProductSendDto updateProduct(UUID id, ProductUpdateDto updateDto) {
         var product = getProductById(id);
 
         updateNameIfPresent(product, updateDto.getName());

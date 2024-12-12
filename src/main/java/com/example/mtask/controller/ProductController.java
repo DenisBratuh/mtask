@@ -1,7 +1,8 @@
 package com.example.mtask.controller;
 
-import com.example.mtask.dto.ProductRcvDto;
-import com.example.mtask.dto.ProductSendDto;
+import com.example.mtask.dto.product.ProductCreateDto;
+import com.example.mtask.dto.product.ProductSendDto;
+import com.example.mtask.dto.product.ProductUpdateDto;
 import com.example.mtask.service.imp.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -10,7 +11,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -27,10 +27,8 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductSendDto> createProduct(@RequestParam String name,
-                                                        @RequestParam UUID categoryId,
-                                                        @RequestParam(required = false) MultipartFile logoFile) {
-        var product = productServiceImp.createProduct(name, categoryId, logoFile);
+    public ResponseEntity<ProductSendDto> createProduct(@ModelAttribute ProductCreateDto dto) {
+        var product = productServiceImp.createProduct(dto);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }
 
@@ -42,7 +40,7 @@ public class ProductController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('EDITOR')")
-    public ResponseEntity<ProductSendDto> updateProduct(@PathVariable UUID id, @ModelAttribute ProductRcvDto updateRequest) {
+    public ResponseEntity<ProductSendDto> updateProduct(@PathVariable UUID id, @ModelAttribute ProductUpdateDto updateRequest) {
         var updatedProduct = productServiceImp.updateProduct(id, updateRequest);
         return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
     }

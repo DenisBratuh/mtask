@@ -1,9 +1,11 @@
-package com.example.mtask.dto;
+package com.example.mtask.dto.category;
+
+import com.example.mtask.dto.product.ProductSendDto;
 
 import java.util.List;
 import java.util.UUID;
 
-public class CategoryDto {
+public class CategorySendDto {
 
     private UUID id;
     private String name;
@@ -11,11 +13,11 @@ public class CategoryDto {
     private String logoUrl;
     private List<ProductSendDto> productSendDtoList;
 
-    public CategoryDto() {
+    public CategorySendDto() {
 
     }
 
-    public CategoryDto(UUID id, String name, String logoUrl, List<ProductSendDto> productSendDtoList) {
+    public CategorySendDto(UUID id, String name, String logoUrl, List<ProductSendDto> productSendDtoList) {
         this.id = id;
         this.name = name;
         this.logoUrl = logoUrl;

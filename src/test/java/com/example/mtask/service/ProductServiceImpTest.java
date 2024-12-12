@@ -1,7 +1,8 @@
 package com.example.mtask.service;
 
-import com.example.mtask.dto.ProductRcvDto;
-import com.example.mtask.dto.ProductSendDto;
+import com.example.mtask.dto.product.ProductCreateDto;
+import com.example.mtask.dto.product.ProductUpdateDto;
+import com.example.mtask.dto.product.ProductSendDto;
 import com.example.mtask.entity.Category;
 import com.example.mtask.entity.Product;
 import com.example.mtask.mapper.ProductAsm;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.example.mtask.entity.LogoType.PRODUCT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,20 +55,28 @@ class ProductServiceImpTest {
         UUID categoryId = UUID.randomUUID();
         String name = "Test Product";
         MultipartFile logoFile = mock(MultipartFile.class);
+        ProductCreateDto createDto = new ProductCreateDto();
+        createDto.setName(name);
+        createDto.setCategoryId(categoryId);
+        createDto.setLogoFile(logoFile);
+
         Product product = new Product();
         ProductSendDto productDto = new ProductSendDto();
 
         when(categoryServiceImp.getCategoryEntityById(categoryId)).thenReturn(mock(Category.class));
-        when(minioService.uploadImage(any(), any())).thenReturn("logoPath");
+        when(logoFile.isEmpty()).thenReturn(false);
+        when(minioService.uploadImage(logoFile, PRODUCT)).thenReturn("logoPath");
         when(productRepository.save(any())).thenReturn(product);
         when(productAsm.toDto(any(Product.class))).thenReturn(productDto);
 
         // When
-        ProductSendDto result = productServiceImp.createProduct(name, categoryId, logoFile);
+        ProductSendDto result = productServiceImp.createProduct(createDto);
 
         // Then
         assertNotNull(result);
-        verify(productRepository, times(1)).save(any());
+        verify(categoryServiceImp, times(1)).getCategoryEntityById(categoryId);
+        verify(minioService, times(1)).uploadImage(logoFile, PRODUCT);
+        verify(productRepository, times(1)).save(any(Product.class));
     }
 
     @Test
@@ -92,7 +102,7 @@ class ProductServiceImpTest {
         // Given
         UUID productId = UUID.randomUUID();
         Product product = new Product();
-        ProductRcvDto updateDto = new ProductRcvDto();
+        ProductUpdateDto updateDto = new ProductUpdateDto();
         updateDto.setName("Updated Name");
         updateDto.setCategoryId(UUID.randomUUID());
         updateDto.setClearLogo(true);

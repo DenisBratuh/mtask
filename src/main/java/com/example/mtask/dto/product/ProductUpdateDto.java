@@ -1,10 +1,10 @@
-package com.example.mtask.dto;
+package com.example.mtask.dto.product;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
-public class ProductRcvDto {
+public class ProductUpdateDto {
     private String name;
     private UUID categoryId;
     private MultipartFile logoFile;

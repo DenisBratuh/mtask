@@ -1,6 +1,7 @@
 package com.example.mtask.controller;
 
-import com.example.mtask.dto.CategoryDto;
+import com.example.mtask.dto.category.CategoryRcvDto;
+import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.service.imp.CategoryServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -8,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
@@ -24,14 +24,13 @@ public class CategoryController {
     }
 
     @PostMapping
-    public ResponseEntity<CategoryDto> createCategory(@RequestParam String name,
-                                                      @RequestParam(required = false) MultipartFile logoFile) {
-        var createdCategoryDto = categoryServiceImp.createCategory(name, logoFile);
+    public ResponseEntity<CategorySendDto> createCategory(@ModelAttribute CategoryRcvDto dto) {
+        var createdCategoryDto = categoryServiceImp.createCategory(dto);
         return new ResponseEntity<>(createdCategoryDto, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CategoryDto> getCategoryById(@PathVariable UUID id) {
+    public ResponseEntity<CategorySendDto> getCategoryById(@PathVariable UUID id) {
         var category = categoryServiceImp.getCategoryById(id);
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
@@ -43,8 +42,8 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<CategoryDto>> getPaginatedCategories(@RequestParam(defaultValue = "0") int page,
-                                                                    @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<CategorySendDto>> getPaginatedCategories(@RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "10") int size) {
         var categoryPage = categoryServiceImp.getPaginatedCategories(page, size);
         return new ResponseEntity<>(categoryPage, HttpStatus.OK);
     }

@@ -1,6 +1,6 @@
 package com.example.mtask.mapper;
 
-import com.example.mtask.dto.ProductSendDto;
+import com.example.mtask.dto.product.ProductSendDto;
 import com.example.mtask.entity.Product;
 import org.springframework.stereotype.Component;
 
