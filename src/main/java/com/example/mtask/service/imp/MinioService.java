@@ -1,7 +1,8 @@
-package com.example.mtask.service;
+package com.example.mtask.service.imp;
 
 import com.example.mtask.entity.LogoType;
 import com.example.mtask.exceptions.MinioOperationException;
+import com.example.mtask.service.inteface.ImageStorageService;
 import com.example.mtask.utils.ImageUtils;
 import io.minio.*;
 import io.minio.errors.MinioException;
@@ -17,7 +18,7 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @Service
-public class MinioService implements ImageStorageService{
+public class MinioService implements ImageStorageService {
 
     private static final int BUFFER_SIZE = 1024;
 

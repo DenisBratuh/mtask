@@ -1,4 +1,4 @@
-package com.example.mtask.service;
+package com.example.mtask.service.inteface;
 
 import com.example.mtask.dto.ProductRcvDto;
 import com.example.mtask.dto.ProductSendDto;

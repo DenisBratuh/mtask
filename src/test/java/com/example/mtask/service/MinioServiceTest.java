@@ -2,6 +2,7 @@ package com.example.mtask.service;
 
 import com.example.mtask.entity.LogoType;
 import com.example.mtask.exceptions.MinioOperationException;
+import com.example.mtask.service.imp.MinioService;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -60,9 +61,7 @@ class MinioServiceTest {
         );
         doThrow(new MinioOperationException("Error during uploading logo image to MinIO", new RuntimeException())).when(minioClient).putObject(any(PutObjectArgs.class));
 
-        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> {
-            minioService.uploadImage(file, LogoType.PRODUCT);
-        });
+        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.uploadImage(file, LogoType.PRODUCT));
 
         assertTrue(exception.getMessage().contains("Error during uploading logo image to MinIO"));
     }
@@ -101,9 +100,7 @@ class MinioServiceTest {
 
         doThrow(new MinioOperationException("Error occurred while downloading the logo from MinIO", new RuntimeException())).when(minioClient).getObject(any(GetObjectArgs.class));
 
-        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> {
-            minioService.downloadImage(imagePath, logoType);
-        });
+        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.downloadImage(imagePath, logoType));
 
         assertTrue(exception.getMessage().contains("Error occurred while downloading the logo from MinIO"));
     }
@@ -123,9 +120,7 @@ class MinioServiceTest {
 
         doThrow(new MinioOperationException("Error occurred while deleting logo file", new RuntimeException())).when(minioClient).removeObject(any(RemoveObjectArgs.class));
 
-        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> {
-            minioService.deleteImage(fileName, LogoType.PRODUCT);
-        });
+        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.deleteImage(fileName, LogoType.PRODUCT));
 
         assertTrue(exception.getMessage().contains("Error occurred while deleting logo file"));
     }

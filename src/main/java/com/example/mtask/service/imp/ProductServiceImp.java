@@ -1,10 +1,11 @@
-package com.example.mtask.service;
+package com.example.mtask.service.imp;
 
 import com.example.mtask.dto.ProductRcvDto;
 import com.example.mtask.dto.ProductSendDto;
 import com.example.mtask.entity.Product;
 import com.example.mtask.mapper.ProductAsm;
 import com.example.mtask.repository.ProductRepository;
+import com.example.mtask.service.inteface.ProductService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ import java.util.UUID;
 import static com.example.mtask.entity.LogoType.PRODUCT;
 
 @Service
-public class ProductServiceImp implements ProductService{
+public class ProductServiceImp implements ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryServiceImp categoryServiceImp;

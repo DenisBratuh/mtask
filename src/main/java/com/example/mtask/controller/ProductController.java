@@ -2,7 +2,7 @@ package com.example.mtask.controller;
 
 import com.example.mtask.dto.ProductRcvDto;
 import com.example.mtask.dto.ProductSendDto;
-import com.example.mtask.service.ProductServiceImp;
+import com.example.mtask.service.imp.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;

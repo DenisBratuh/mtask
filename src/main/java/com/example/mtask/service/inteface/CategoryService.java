@@ -1,4 +1,4 @@
-package com.example.mtask.service;
+package com.example.mtask.service.inteface;
 
 import com.example.mtask.dto.CategoryDto;
 import org.springframework.data.domain.Page;

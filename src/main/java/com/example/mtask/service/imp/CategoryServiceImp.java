@@ -1,9 +1,10 @@
-package com.example.mtask.service;
+package com.example.mtask.service.imp;
 
 import com.example.mtask.dto.CategoryDto;
 import com.example.mtask.entity.Category;
 import com.example.mtask.mapper.CategoryAsm;
 import com.example.mtask.repository.CategoryRepository;
+import com.example.mtask.service.inteface.CategoryService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,7 @@ import static com.example.mtask.entity.LogoType.CATEGORY;
 import static com.example.mtask.entity.LogoType.PRODUCT;
 
 @Service
-public class CategoryServiceImp implements CategoryService{
+public class CategoryServiceImp implements CategoryService {
 
     private final CategoryRepository repository;
     private final CategoryAsm asm;

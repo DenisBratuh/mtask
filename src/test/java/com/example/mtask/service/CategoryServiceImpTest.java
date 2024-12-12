@@ -4,6 +4,8 @@ import com.example.mtask.dto.CategoryDto;
 import com.example.mtask.entity.Category;
 import com.example.mtask.mapper.CategoryAsm;
 import com.example.mtask.repository.CategoryRepository;
+import com.example.mtask.service.imp.CategoryServiceImp;
+import com.example.mtask.service.imp.MinioService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
