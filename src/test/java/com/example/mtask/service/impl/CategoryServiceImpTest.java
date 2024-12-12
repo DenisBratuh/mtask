@@ -3,7 +3,7 @@ package com.example.mtask.service.impl;
 import com.example.mtask.dto.category.CategoryRcvDto;
 import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.entity.Category;
-import com.example.mtask.mapper.CategoryAsm;
+import com.example.mtask.assembler.CategoryAsm;
 import com.example.mtask.repository.CategoryRepository;
 import com.example.mtask.service.imp.CategoryServiceImp;
 import com.example.mtask.service.imp.MinioService;

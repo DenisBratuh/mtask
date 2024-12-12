@@ -4,7 +4,7 @@ import com.example.mtask.dto.product.ProductCreateDto;
 import com.example.mtask.dto.product.ProductUpdateDto;
 import com.example.mtask.dto.product.ProductSendDto;
 import com.example.mtask.entity.Product;
-import com.example.mtask.mapper.ProductAsm;
+import com.example.mtask.assembler.ProductAsm;
 import com.example.mtask.repository.ProductRepository;
 import com.example.mtask.service.inteface.ProductService;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-package com.example.mtask.mapper;
+package com.example.mtask.assembler;
 
 import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.entity.Category;
