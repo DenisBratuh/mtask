@@ -20,13 +20,13 @@ import static com.example.mtask.entity.LogoType.PRODUCT;
 public class ProductServiceImp implements ProductService{
 
     private final ProductRepository productRepository;
-    private final CategoryService categoryService;
+    private final CategoryServiceImp categoryServiceImp;
     private final MinioService minioService;
     private final ProductAsm productAsm;
 
-    public ProductServiceImp(ProductRepository productRepository, CategoryService categoryService, MinioService minioService, ProductAsm productAsm) {
+    public ProductServiceImp(ProductRepository productRepository, CategoryServiceImp categoryServiceImp, MinioService minioService, ProductAsm productAsm) {
         this.productRepository = productRepository;
-        this.categoryService = categoryService;
+        this.categoryServiceImp = categoryServiceImp;
         this.minioService = minioService;
         this.productAsm = productAsm;
     }
@@ -34,7 +34,7 @@ public class ProductServiceImp implements ProductService{
     @Override
     @Transactional
     public ProductSendDto createProduct(String name, UUID categoryId, MultipartFile logoFile) {
-        var category = categoryService.getCategoryEntityById(categoryId);
+        var category = categoryServiceImp.getCategoryEntityById(categoryId);
 
         String logoPath = null;
         if (logoFile != null && !logoFile.isEmpty()) {
@@ -134,7 +134,7 @@ public class ProductServiceImp implements ProductService{
 
     private void updateCategoryIfPresent(Product product, UUID categoryId) {
         if (categoryId != null) {
-            var category = categoryService.getCategoryEntityById(categoryId);
+            var category = categoryServiceImp.getCategoryEntityById(categoryId);
             product.setCategory(category);
         }
     }

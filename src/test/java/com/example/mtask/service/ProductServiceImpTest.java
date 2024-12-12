@@ -33,7 +33,7 @@ class ProductServiceImpTest {
     private ProductRepository productRepository;
 
     @Mock
-    private CategoryService categoryService;
+    private CategoryServiceImp categoryServiceImp;
 
     @Mock
     private MinioService minioService;
@@ -53,7 +53,7 @@ class ProductServiceImpTest {
         Product product = new Product();
         ProductSendDto productDto = new ProductSendDto();
 
-        when(categoryService.getCategoryEntityById(categoryId)).thenReturn(mock(Category.class));
+        when(categoryServiceImp.getCategoryEntityById(categoryId)).thenReturn(mock(Category.class));
         when(minioService.uploadImage(any(), any())).thenReturn("logoPath");
         when(productRepository.save(any())).thenReturn(product);
         when(productAsm.toDto(any(Product.class))).thenReturn(productDto);
@@ -96,7 +96,7 @@ class ProductServiceImpTest {
 
         Category mockCategory = new Category(); // Mocked valid category
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
-        when(categoryService.getCategoryEntityById(updateDto.getCategoryId())).thenReturn(mockCategory);
+        when(categoryServiceImp.getCategoryEntityById(updateDto.getCategoryId())).thenReturn(mockCategory);
         when(productRepository.save(product)).thenReturn(product);
         when(productAsm.toDto(product)).thenReturn(new ProductSendDto());
 
@@ -106,7 +106,7 @@ class ProductServiceImpTest {
         // Then
         assertNotNull(result);
         verify(productRepository, times(1)).save(product);
-        verify(categoryService, times(1)).getCategoryEntityById(updateDto.getCategoryId());
+        verify(categoryServiceImp, times(1)).getCategoryEntityById(updateDto.getCategoryId());
     }
 
     @Test

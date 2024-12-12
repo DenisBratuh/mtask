@@ -11,6 +11,10 @@ public class CategoryDto {
     private String logoUrl;
     private List<ProductSendDto> productSendDtoList;
 
+    public CategoryDto() {
+
+    }
+
     public CategoryDto(UUID id, String name, String logoUrl, List<ProductSendDto> productSendDtoList) {
         this.id = id;
         this.name = name;
