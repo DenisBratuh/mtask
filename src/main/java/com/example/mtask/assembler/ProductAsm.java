@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 public class ProductAsm {
@@ -19,10 +20,13 @@ public class ProductAsm {
         );
     }
     public List<ProductSendDto> toDto(List<Product> entityList) {
-        //todo?
         if (entityList == null) {
             return Collections.emptyList();
         }
-        return entityList.stream().map(this::toDto).toList();
+
+        return entityList.stream()
+                .filter(Objects::nonNull)
+                .map(this::toDto)
+                .toList();
     }
 }
