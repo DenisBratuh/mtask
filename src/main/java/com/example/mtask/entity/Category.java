@@ -9,12 +9,6 @@ import java.util.UUID;
 @Table(name = "category")
 public class Category {
 
-    public Category(UUID id, String name, String logoUrl) {
-        this.id = id;
-        this.name = name;
-        this.logoUrl = logoUrl;
-    }
-
     @Column(name = "id")
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -30,6 +24,12 @@ public class Category {
     private List<Product> products;
 
     public Category() {
+    }
+
+    public Category(UUID id, String name, String logoUrl) {
+        this.id = id;
+        this.name = name;
+        this.logoUrl = logoUrl;
     }
 
     public UUID getId() {

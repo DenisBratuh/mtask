@@ -34,8 +34,17 @@ public class CategoryController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create a new category", description = "Creates a category and optionally uploads a logo.")
-    @ApiResponse(responseCode = "201", description = "Category created successfully",
-            content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategorySendDto.class)))
+    @ApiResponses({
+            @ApiResponse(
+                    responseCode = "201", description = "Category created successfully",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CategorySendDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "413",
+                    description = "Payload Too Large - File exceeds the maximum allowed size of 1MB.",
+                    content = @Content(mediaType = "application/json")
+            )
+    })
     public ResponseEntity<CategorySendDto> createCategory(@ModelAttribute CategoryRcvDto dto) {
         var createdCategoryDto = service.createCategory(dto);
         return new ResponseEntity<>(createdCategoryDto, HttpStatus.CREATED);

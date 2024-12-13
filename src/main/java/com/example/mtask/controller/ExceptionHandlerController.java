@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ExceptionHandlerController {
 
-    //TODO check
     @ExceptionHandler(SizeLimitExceededException.class)
     public ResponseEntity<Object> handleSizeLimitExceededException(SizeLimitExceededException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.PAYLOAD_TOO_LARGE);

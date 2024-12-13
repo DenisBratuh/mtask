@@ -9,13 +9,9 @@ public class CategorySendDto {
 
     private UUID id;
     private String name;
-    //TODO check for update?
+
     private String logoUrl;
-    private List<ProductSendDto> productSendDtoList;
-
-    public CategorySendDto() {
-
-    }
+    private final List<ProductSendDto> productSendDtoList;
 
     public CategorySendDto(UUID id, String name, String logoUrl, List<ProductSendDto> productSendDtoList) {
         this.id = id;
@@ -50,9 +46,5 @@ public class CategorySendDto {
 
     public List<ProductSendDto> getProductDtoList() {
         return productSendDtoList;
-    }
-
-    public void setProductDtoList(List<ProductSendDto> productSendDtoList) {
-        this.productSendDtoList = productSendDtoList;
     }
 }

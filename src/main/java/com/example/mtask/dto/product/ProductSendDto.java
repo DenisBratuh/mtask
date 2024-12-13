@@ -40,15 +40,7 @@ public class ProductSendDto {
         return logoUrl;
     }
 
-    public void setLogoUrl(String logoUrl) {
-        this.logoUrl = logoUrl;
-    }
-
     public UUID getCategoryId() {
         return categoryId;
-    }
-
-    public void setCategoryId(UUID categoryId) {
-        this.categoryId = categoryId;
     }
 }

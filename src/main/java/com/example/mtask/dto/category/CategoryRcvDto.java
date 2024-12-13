@@ -6,14 +6,6 @@ public class CategoryRcvDto {
     private String name;
     private MultipartFile file;
 
-    public CategoryRcvDto() {
-    }
-
-    public CategoryRcvDto(String name, MultipartFile file) {
-        this.name = name;
-        this.file = file;
-    }
-
     public String getName() {
         return name;
     }

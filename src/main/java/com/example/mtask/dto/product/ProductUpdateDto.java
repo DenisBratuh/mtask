@@ -30,10 +30,6 @@ public class ProductUpdateDto {
         return logoFile;
     }
 
-    public void setLogoFile(MultipartFile logoFile) {
-        this.logoFile = logoFile;
-    }
-
     public boolean isClearLogo() {
         return clearLogo;
     }

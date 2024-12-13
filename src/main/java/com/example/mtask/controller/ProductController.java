@@ -35,7 +35,7 @@ public class ProductController {
         this.service = service;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create a new product", description = "Creates a new product and optionally uploads a logo.")
     @ApiResponse(responseCode = "201", description = "Product created successfully",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductSendDto.class)))
