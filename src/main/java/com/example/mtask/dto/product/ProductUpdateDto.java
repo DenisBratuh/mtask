@@ -30,6 +30,11 @@ public class ProductUpdateDto {
         return logoFile;
     }
 
+    //needed for json
+    public void setLogoFile(MultipartFile logoFile) {
+        this.logoFile = logoFile;
+    }
+
     public boolean isClearLogo() {
         return clearLogo;
     }
