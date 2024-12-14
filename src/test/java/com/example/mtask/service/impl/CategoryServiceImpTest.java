@@ -8,6 +8,7 @@ import com.example.mtask.repository.CategoryRepository;
 import com.example.mtask.service.imp.CategoryServiceImp;
 import com.example.mtask.service.imp.MinioService;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,21 +42,28 @@ class CategoryServiceImpTest {
     @InjectMocks
     private CategoryServiceImp categoryServiceImp;
 
+    private static final String TEST_LOGO_PATH = "logoPath";
+    private static final UUID CATEGORY_ID = UUID.randomUUID();
+    private static final Category TEST_CATEGORY = new Category();
+
+    @BeforeEach
+    void setUp() {
+        TEST_CATEGORY.setLogoUrl(TEST_LOGO_PATH);
+    }
+
     @Test
     void testCreateCategory() {
-        var name = "Test Category";
-        var logoFile = mock(MultipartFile.class);
         var categoryRcvDto = new CategoryRcvDto();
-        categoryRcvDto.setName(name);
-        categoryRcvDto.setFile(logoFile);
+        categoryRcvDto.setName("Test Category");
+        categoryRcvDto.setFile(mock(MultipartFile.class));
 
-        var category = new Category();
+        var savedCategory = new Category();
         var categorySendDto = new CategorySendDto();
 
-        when(logoFile.isEmpty()).thenReturn(false);
-        when(minioService.uploadImage(any(MultipartFile.class), eq(CATEGORY))).thenReturn("logoPath");
-        when(categoryRepository.save(any(Category.class))).thenReturn(category);
-        when(categoryAsm.toDto(category)).thenReturn(categorySendDto);
+        when(categoryRcvDto.getFile().isEmpty()).thenReturn(false);
+        when(minioService.uploadImage(any(MultipartFile.class), eq(CATEGORY))).thenReturn(TEST_LOGO_PATH);
+        when(categoryRepository.save(any(Category.class))).thenReturn(savedCategory);
+        when(categoryAsm.toDto(savedCategory)).thenReturn(categorySendDto);
 
         var result = categoryServiceImp.createCategory(categoryRcvDto);
 
@@ -66,105 +74,82 @@ class CategoryServiceImpTest {
 
     @Test
     void testGetCategoryById() {
-        var id = UUID.randomUUID();
-        var category = new Category();
         var categorySendDto = new CategorySendDto();
 
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
-        when(categoryAsm.toDto(category)).thenReturn(categorySendDto);
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(TEST_CATEGORY));
+        when(categoryAsm.toDto(TEST_CATEGORY)).thenReturn(categorySendDto);
 
-        CategorySendDto result = categoryServiceImp.getCategoryById(id);
+        var result = categoryServiceImp.getCategoryById(CATEGORY_ID);
 
         assertNotNull(result);
-        verify(categoryRepository, times(1)).findById(id);
+        verify(categoryRepository).findById(CATEGORY_ID);
     }
 
     @Test
     void testGetCategoryById_NotFound() {
-        var id = UUID.randomUUID();
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.empty());
 
-        when(categoryRepository.findById(id)).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> categoryServiceImp.getCategoryById(id));
-        verify(categoryRepository, times(1)).findById(id);
+        assertThrows(EntityNotFoundException.class, () -> categoryServiceImp.getCategoryById(CATEGORY_ID));
+        verify(categoryRepository).findById(CATEGORY_ID);
     }
 
     @Test
     void testDeleteCategory() {
-        var id = UUID.randomUUID();
-        var category = new Category();
-        category.setLogoUrl("logoPath");
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(TEST_CATEGORY));
 
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
+        categoryServiceImp.deleteCategory(CATEGORY_ID);
 
-        categoryServiceImp.deleteCategory(id);
-
-        verify(minioService, times(1)).deleteImage(eq("logoPath"));
-        verify(categoryRepository, times(1)).delete(category);
+        verify(minioService).deleteImage(TEST_LOGO_PATH);
+        verify(categoryRepository).delete(TEST_CATEGORY);
     }
 
     @Test
     void testDeleteCategory_NoLogo() {
-        var id = UUID.randomUUID();
-        var category = new Category();
-        category.setLogoUrl(null);
+        TEST_CATEGORY.setLogoUrl(null);
 
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(TEST_CATEGORY));
 
-        categoryServiceImp.deleteCategory(id);
+        categoryServiceImp.deleteCategory(CATEGORY_ID);
 
         verify(minioService, never()).deleteImage(anyString());
-        verify(categoryRepository, times(1)).delete(category);
+        verify(categoryRepository).delete(TEST_CATEGORY);
     }
 
     @Test
     void testGetPaginatedCategories() {
-        int page = 0;
-        int size = 10;
-        var pageable = PageRequest.of(page, size);
-        var categoryPage = new PageImpl<>(Collections.singletonList(new Category()));
+        var pageable = PageRequest.of(0, 10);
+        var categoryPage = new PageImpl<>(Collections.singletonList(TEST_CATEGORY));
+        var categorySendDto = new CategorySendDto();
 
         when(categoryRepository.findAll(pageable)).thenReturn(categoryPage);
-        when(categoryAsm.toDto(any(Category.class))).thenReturn(new CategorySendDto());
+        when(categoryAsm.toDto(any(Category.class))).thenReturn(categorySendDto);
 
-        var result = categoryServiceImp.getPaginatedCategories(page, size);
+        var result = categoryServiceImp.getPaginatedCategories(0, 10);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        verify(categoryRepository, times(1)).findAll(pageable);
+        verify(categoryRepository).findAll(pageable);
     }
 
     @Test
     void testGetCategoryLogo() {
-        var id = UUID.randomUUID();
-        var category = new Category();
-        category.setLogoUrl("logoPath");
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(TEST_CATEGORY));
+        when(minioService.downloadImage(TEST_LOGO_PATH)).thenReturn(new byte[]{1, 2, 3});
 
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
-
-        var categorySendDto = new CategorySendDto();
-        categorySendDto.setLogoUrl("logoPath");
-        when(categoryAsm.toDto(any(Category.class))).thenReturn(categorySendDto);
-
-        when(minioService.downloadImage(eq("logoPath"))).thenReturn(new byte[]{1, 2, 3});
-
-        byte[] result = categoryServiceImp.getCategoryLogo(id);
+        var result = categoryServiceImp.getCategoryLogo(CATEGORY_ID);
 
         assertNotNull(result);
         assertEquals(3, result.length);
-        verify(minioService, times(1)).downloadImage(eq("logoPath"));
+        verify(minioService).downloadImage(TEST_LOGO_PATH);
     }
 
     @Test
     void testGetCategoryLogo_NoLogo() {
-        var id = UUID.randomUUID();
-        var category = new Category();
-        category.setLogoUrl(null);
+        TEST_CATEGORY.setLogoUrl(null);
 
-        when(categoryRepository.findById(id)).thenReturn(Optional.of(category));
-        when(categoryAsm.toDto(category)).thenReturn(new CategorySendDto());
+        when(categoryRepository.findById(CATEGORY_ID)).thenReturn(Optional.of(TEST_CATEGORY));
 
-        byte[] result = categoryServiceImp.getCategoryLogo(id);
+        var result = categoryServiceImp.getCategoryLogo(CATEGORY_ID);
 
         assertNotNull(result);
         assertEquals(0, result.length);
