@@ -8,7 +8,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -41,13 +40,13 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        UserDetails regularUser =
+        var regularUser =
                 User.builder()
                         .username("regularUser")
                         .password(passwordEncoder().encode("password"))
                         .roles("USER")
                         .build();
-        UserDetails editorUser =
+        var editorUser =
                 User.builder()
                         .username("editorUser")
                         .password(passwordEncoder().encode("password"))
