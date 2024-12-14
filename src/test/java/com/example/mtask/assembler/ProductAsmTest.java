@@ -109,10 +109,8 @@ class ProductAsmTest {
 
         List<Product> products = Arrays.asList(product, null);
 
-        // When
         List<ProductSendDto> result = productAsm.toDto(products);
 
-        // Then
         assertNotNull(result);
         assertEquals(1, result.size());
 
