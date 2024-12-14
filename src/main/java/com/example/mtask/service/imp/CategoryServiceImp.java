@@ -32,6 +32,7 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Transactional
+    @Override
     public CategorySendDto createCategory(CategoryRcvDto dto) {
         var logoFile = dto.getFile();
         var name = dto.getName();
@@ -51,17 +52,20 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public CategorySendDto getCategoryById(UUID id) {
         var foundEntity = getCategoryByIdInternal(id);
         return asm.toDto(foundEntity);
     }
 
     @Transactional(readOnly = true)
+    @Override
     public Category getCategoryEntityById(UUID id) {
         return getCategoryByIdInternal(id);
     }
 
     @Transactional
+    @Override
     public void deleteCategory(UUID id) {
         var category = repository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Category not found with id " + id));
@@ -74,6 +78,7 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public Page<CategorySendDto> getPaginatedCategories(int page, int size) {
         var pageable = PageRequest.of(page, size);
         var categoryPage = repository.findAll(pageable);
@@ -82,6 +87,7 @@ public class CategoryServiceImp implements CategoryService {
     }
 
     @Transactional(readOnly = true)
+    @Override
     public byte[] getCategoryLogo(UUID categoryId) {
         var logoPath = getCategoryByIdInternal(categoryId).getLogoUrl();
 

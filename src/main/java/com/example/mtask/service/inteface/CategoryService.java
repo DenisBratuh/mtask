@@ -15,21 +15,20 @@ import java.util.UUID;
  */
 public interface CategoryService {
 
-    //TODO
     /**
      * Creates a new category with the specified details.
      *
+     * @param dto a {@link CategoryRcvDto} containing the details of the category to be created
      * @return a {@link CategorySendDto} containing the details of the created category
      */
     CategorySendDto createCategory(CategoryRcvDto dto);
 
-    //TODO THROWS!!!
     /**
      * Retrieves the details of a category by its ID.
      *
      * @param id the UUID of the category
      * @return a {@link CategorySendDto} containing the category's details
-     * @throws RuntimeException if the category with the specified ID is not found
+     * @throws jakarta.persistence.EntityNotFoundException if the category with the specified ID is not found
      */
     CategorySendDto getCategoryById(UUID id);
 
@@ -38,7 +37,7 @@ public interface CategoryService {
      *
      * @param id the UUID of the category
      * @return the {@link com.example.mtask.entity.Category} entity
-     * @throws RuntimeException if the category with the specified ID is not found
+     * @throws jakarta.persistence.EntityNotFoundException if the category with the specified ID is not found
      */
     com.example.mtask.entity.Category getCategoryEntityById(UUID id);
 
@@ -46,7 +45,7 @@ public interface CategoryService {
      * Deletes a category by its ID.
      *
      * @param id the UUID of the category to delete
-     * @throws RuntimeException if the category with the specified ID is not found
+     * @throws jakarta.persistence.EntityNotFoundException if the category with the specified ID is not found
      */
     void deleteCategory(UUID id);
 
@@ -64,7 +63,7 @@ public interface CategoryService {
      *
      * @param categoryId the UUID of the category
      * @return a byte array containing the content of the logo
-     * @throws RuntimeException if the category or its logo is not found
+     * @throws jakarta.persistence.EntityNotFoundException if the category is not found
      */
     byte[] getCategoryLogo(UUID categoryId);
 }
