@@ -5,6 +5,7 @@ import com.example.mtask.dto.category.CategoryRcvDto;
 import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.service.inteface.CategoryService;
 import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -35,22 +36,31 @@ class CategoryControllerUnitTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private static final String BASE_URL = "/api/categories";
+    private static final UUID TEST_UUID = UUID.randomUUID();
+    private static final String TEST_CATEGORY_NAME = "Test Category";
+    private MockMultipartFile testFile;
+
+    @BeforeEach
+    void setUp() {
+        testFile = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "test content".getBytes());
+    }
+
     @Test
     @WithMockUser(username = "regularUser")
     void testCreateCategory() throws Exception {
         var categorySendDto = new CategorySendDto();
-        categorySendDto.setId(UUID.randomUUID());
-        categorySendDto.setName("Test Category");
+        categorySendDto.setId(TEST_UUID);
+        categorySendDto.setName(TEST_CATEGORY_NAME);
 
-        MockMultipartFile file = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "test content".getBytes());
         when(categoryService.createCategory(any(CategoryRcvDto.class))).thenReturn(categorySendDto);
 
-        mockMvc.perform(multipart("/api/categories")
-                        .file(file)
-                        .param("name", "Test Category")
+        mockMvc.perform(multipart(BASE_URL)
+                        .file(testFile)
+                        .param("name", TEST_CATEGORY_NAME)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Test Category"));
+                .andExpect(jsonPath("$.name").value(TEST_CATEGORY_NAME));
 
         verify(categoryService, times(1)).createCategory(any(CategoryRcvDto.class));
     }
@@ -59,15 +69,15 @@ class CategoryControllerUnitTest {
     @WithMockUser(username = "regularUser")
     void testGetCategoryById() throws Exception {
         var categorySendDto = new CategorySendDto();
-        categorySendDto.setId(UUID.randomUUID());
-        categorySendDto.setName("Test Category");
+        categorySendDto.setId(TEST_UUID);
+        categorySendDto.setName(TEST_CATEGORY_NAME);
 
         when(categoryService.getCategoryById(any(UUID.class))).thenReturn(categorySendDto);
 
-        mockMvc.perform(get("/api/categories/{id}", UUID.randomUUID())
+        mockMvc.perform(get(BASE_URL + "/{id}", TEST_UUID)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Test Category"));
+                .andExpect(jsonPath("$.name").value(TEST_CATEGORY_NAME));
 
         verify(categoryService, times(1)).getCategoryById(any(UUID.class));
     }
@@ -75,7 +85,7 @@ class CategoryControllerUnitTest {
     @Test
     @WithMockUser(username = "regularUser")
     void testDeleteCategory() throws Exception {
-        mockMvc.perform(delete("/api/categories/{id}", UUID.randomUUID()))
+        mockMvc.perform(delete(BASE_URL + "/{id}", TEST_UUID))
                 .andExpect(status().isNoContent());
 
         verify(categoryService, times(1)).deleteCategory(any(UUID.class));
@@ -87,7 +97,7 @@ class CategoryControllerUnitTest {
         var categoryPage = new PageImpl<>(List.of(new CategorySendDto()));
         when(categoryService.getPaginatedCategories(anyInt(), anyInt())).thenReturn(categoryPage);
 
-        mockMvc.perform(get("/api/categories")
+        mockMvc.perform(get(BASE_URL)
                         .param("page", "0")
                         .param("size", "10")
                         .accept(MediaType.APPLICATION_JSON))
@@ -101,7 +111,7 @@ class CategoryControllerUnitTest {
     void testGetCategoryLogo() throws Exception {
         when(categoryService.getCategoryLogo(any(UUID.class))).thenReturn("test image content".getBytes());
 
-        mockMvc.perform(get("/api/categories/{id}/logo", UUID.randomUUID())
+        mockMvc.perform(get(BASE_URL + "/{id}/logo", TEST_UUID)
                         .accept(MediaType.IMAGE_JPEG_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_JPEG_VALUE));
@@ -114,7 +124,7 @@ class CategoryControllerUnitTest {
     void testGetCategoryByIdNotFound() throws Exception {
         when(categoryService.getCategoryById(any(UUID.class))).thenThrow(new EntityNotFoundException("Category not found"));
 
-        mockMvc.perform(get("/api/categories/{id}", UUID.randomUUID())
+        mockMvc.perform(get(BASE_URL + "/{id}", TEST_UUID)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string("Category not found"));
@@ -133,9 +143,9 @@ class CategoryControllerUnitTest {
         doThrow(new IllegalArgumentException("Only image files are allowed"))
                 .when(categoryService).createCategory(any(CategoryRcvDto.class));
 
-        mockMvc.perform(multipart("/api/categories")
+        mockMvc.perform(multipart(BASE_URL)
                         .file(invalidFile)
-                        .param("name", "Test Category")
+                        .param("name", TEST_CATEGORY_NAME)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Only image files are allowed"));
