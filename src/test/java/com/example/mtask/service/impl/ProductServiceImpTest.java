@@ -51,17 +51,16 @@ class ProductServiceImpTest {
 
     @Test
     void testCreateProduct() {
-        // Given
-        UUID categoryId = UUID.randomUUID();
-        String name = "Test Product";
-        MultipartFile logoFile = mock(MultipartFile.class);
-        ProductCreateDto createDto = new ProductCreateDto();
+        var categoryId = UUID.randomUUID();
+        var name = "Test Product";
+        var logoFile = mock(MultipartFile.class);
+        var createDto = new ProductCreateDto();
         createDto.setName(name);
         createDto.setCategoryId(categoryId);
         createDto.setLogoFile(logoFile);
 
-        Product product = new Product();
-        ProductSendDto productDto = new ProductSendDto();
+        var product = new Product();
+        var productDto = new ProductSendDto();
 
         when(categoryServiceImp.getCategoryEntityById(categoryId)).thenReturn(mock(Category.class));
         when(logoFile.isEmpty()).thenReturn(false);
@@ -69,10 +68,8 @@ class ProductServiceImpTest {
         when(productRepository.save(any())).thenReturn(product);
         when(productAsm.toDto(any(Product.class))).thenReturn(productDto);
 
-        // When
-        ProductSendDto result = productServiceImp.createProduct(createDto);
+        var result = productServiceImp.createProduct(createDto);
 
-        // Then
         assertNotNull(result);
         verify(categoryServiceImp, times(1)).getCategoryEntityById(categoryId);
         verify(minioService, times(1)).uploadImage(logoFile, PRODUCT);
@@ -81,42 +78,36 @@ class ProductServiceImpTest {
 
     @Test
     void testGetProductDtoById() {
-        // Given
-        UUID productId = UUID.randomUUID();
-        Product product = new Product();
-        ProductSendDto productDto = new ProductSendDto();
+        var productId = UUID.randomUUID();
+        var product = new Product();
+        var productDto = new ProductSendDto();
 
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(productAsm.toDto(product)).thenReturn(productDto);
 
-        // When
         ProductSendDto result = productServiceImp.getProductDtoById(productId);
 
-        // Then
         assertNotNull(result);
         verify(productRepository, times(1)).findById(productId);
     }
 
     @Test
     void testUpdateProduct() {
-        // Given
-        UUID productId = UUID.randomUUID();
-        Product product = new Product();
-        ProductUpdateDto updateDto = new ProductUpdateDto();
+        var productId = UUID.randomUUID();
+        var product = new Product();
+        var updateDto = new ProductUpdateDto();
         updateDto.setName("Updated Name");
         updateDto.setCategoryId(UUID.randomUUID());
         updateDto.setClearLogo(true);
 
-        Category mockCategory = new Category(); // Mocked valid category
+        var mockCategory = new Category();
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
         when(categoryServiceImp.getCategoryEntityById(updateDto.getCategoryId())).thenReturn(mockCategory);
         when(productRepository.save(product)).thenReturn(product);
         when(productAsm.toDto(product)).thenReturn(new ProductSendDto());
 
-        // When
-        ProductSendDto result = productServiceImp.updateProduct(productId, updateDto);
+        var result = productServiceImp.updateProduct(productId, updateDto);
 
-        // Then
         assertNotNull(result);
         verify(productRepository, times(1)).save(product);
         verify(categoryServiceImp, times(1)).getCategoryEntityById(updateDto.getCategoryId());
@@ -124,35 +115,29 @@ class ProductServiceImpTest {
 
     @Test
     void testDeleteProduct() {
-        // Given
-        UUID productId = UUID.randomUUID();
-        Product product = new Product();
+        var productId = UUID.randomUUID();
+        var product = new Product();
         product.setLogoUrl("logoPath");
 
         when(productRepository.findById(productId)).thenReturn(Optional.of(product));
 
-        // When
         productServiceImp.deleteProduct(productId);
 
-        // Then
         verify(minioService, times(1)).deleteImage(eq("logoPath"));
         verify(productRepository, times(1)).delete(product);
     }
 
     @Test
     void testGetPaginatedProducts() {
-        // Given
-        PageRequest pageable = PageRequest.of(0, 10);
+        var pageable = PageRequest.of(0, 10);
         List<Product> products = Collections.singletonList(new Product());
         Page<Product> productPage = new PageImpl<>(products);
 
         when(productRepository.findAll(pageable)).thenReturn(productPage);
         when(productAsm.toDto(any(Product.class))).thenReturn(new ProductSendDto());
 
-        // When
-        Page<ProductSendDto> result = productServiceImp.getPaginatedProducts(0, 10);
+        var result = productServiceImp.getPaginatedProducts(0, 10);
 
-        // Then
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
         verify(productRepository, times(1)).findAll(pageable);

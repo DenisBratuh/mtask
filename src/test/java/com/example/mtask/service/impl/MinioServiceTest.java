@@ -32,7 +32,7 @@ class MinioServiceTest {
 
     @BeforeEach
     void setUp() {
-        String testDefaultBucket = "test-bucket";
+        var testDefaultBucket = "test-bucket";
         minioService = new MinioService(minioClient, testDefaultBucket);
     }
 
@@ -44,16 +44,15 @@ class MinioServiceTest {
                 "image/jpeg",
                 new byte[]{1, 2, 3, 4}
         );
-        LogoType logoType = LogoType.CATEGORY;
 
-        assertDoesNotThrow(() -> minioService.uploadImage(file, logoType));
+        assertDoesNotThrow(() -> minioService.uploadImage(file, LogoType.CATEGORY));
 
         verify(minioClient, times(1)).putObject(any(PutObjectArgs.class));
     }
 
     @Test
     void testUploadImageFailure() throws Exception {
-        MockMultipartFile file = new MockMultipartFile(
+        var file = new MockMultipartFile(
                 "image",
                 "test.jpg",
                 "image/jpeg",
@@ -61,25 +60,25 @@ class MinioServiceTest {
         );
         doThrow(new MinioOperationException("Error during uploading logo image to MinIO", new RuntimeException())).when(minioClient).putObject(any(PutObjectArgs.class));
 
-        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.uploadImage(file, LogoType.PRODUCT));
+        var exception = assertThrows(MinioOperationException.class, () -> minioService.uploadImage(file, LogoType.PRODUCT));
 
         assertTrue(exception.getMessage().contains("Error during uploading logo image to MinIO"));
     }
 
     @Test
     void testDownloadImageFailure() throws Exception {
-        String imagePath = "test.jpg";
+        var imagePath = "test.jpg";
 
         doThrow(new MinioOperationException("Error occurred while downloading the logo from MinIO", new RuntimeException())).when(minioClient).getObject(any(GetObjectArgs.class));
 
-        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.downloadImage(imagePath));
+        var exception = assertThrows(MinioOperationException.class, () -> minioService.downloadImage(imagePath));
 
         assertTrue(exception.getMessage().contains("Error occurred while downloading the logo from MinIO"));
     }
 
     @Test
     void testDeleteImageSuccess() throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
-        String fileName = "test.jpg";
+        var fileName = "test.jpg";
 
         assertDoesNotThrow(() -> minioService.deleteImage(fileName));
         verify(minioClient, times(1)).removeObject(any(RemoveObjectArgs.class));
@@ -87,11 +86,11 @@ class MinioServiceTest {
 
     @Test
     void testDeleteImageFailure() throws Exception {
-        String fileName = "test.jpg";
+        var fileName = "test.jpg";
 
         doThrow(new MinioOperationException("Error occurred while deleting logo file", new RuntimeException())).when(minioClient).removeObject(any(RemoveObjectArgs.class));
 
-        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.deleteImage(fileName));
+        var exception = assertThrows(MinioOperationException.class, () -> minioService.deleteImage(fileName));
 
         assertTrue(exception.getMessage().contains("Error occurred while deleting logo file"));
     }

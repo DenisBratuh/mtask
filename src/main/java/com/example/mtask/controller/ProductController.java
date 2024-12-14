@@ -3,7 +3,6 @@ package com.example.mtask.controller;
 import com.example.mtask.dto.product.ProductCreateDto;
 import com.example.mtask.dto.product.ProductSendDto;
 import com.example.mtask.dto.product.ProductUpdateDto;
-import com.example.mtask.service.imp.ProductServiceImp;
 import com.example.mtask.service.inteface.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,7 +30,7 @@ public class ProductController {
     private final ProductService service;
 
     @Autowired
-    public ProductController(ProductServiceImp service) {
+    public ProductController(ProductService service) {
         this.service = service;
     }
 

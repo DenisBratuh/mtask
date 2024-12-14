@@ -18,25 +18,22 @@ class ProductAsmTest {
 
     @Test
     void testToDto_SingleEntity() {
-        // Given
-        UUID productId = UUID.randomUUID();
-        String productName = "Test Product";
-        String logoUrl = "logoPath";
-        UUID categoryId = UUID.randomUUID();
+        var productId = UUID.randomUUID();
+        var productName = "Test Product";
+        var logoUrl = "logoPath";
+        var categoryId = UUID.randomUUID();
 
-        Category category = new Category();
+        var category = new Category();
         category.setId(categoryId);
 
-        Product product = new Product();
+        var product = new Product();
         product.setId(productId);
         product.setName(productName);
         product.setLogoUrl(logoUrl);
         product.setCategory(category);
 
-        // When
-        ProductSendDto dto = productAsm.toDto(product);
+        var dto = productAsm.toDto(product);
 
-        // Then
         assertNotNull(dto);
         assertEquals(productId, dto.getId());
         assertEquals(productName, dto.getName());
@@ -46,43 +43,37 @@ class ProductAsmTest {
 
     @Test
     void testToDto_NullEntityList() {
-        // When
-        List<ProductSendDto> result = productAsm.toDto((List<Product>) null);
+        var result = productAsm.toDto((List<Product>) null);
 
-        // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testToDto_EmptyEntityList() {
-        // Given
         List<Product> emptyList = Collections.emptyList();
 
-        // When
         List<ProductSendDto> result = productAsm.toDto(emptyList);
 
-        // Then
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
     @Test
     void testToDto_ListWithEntities() {
-        // Given
-        UUID productId1 = UUID.randomUUID();
-        UUID productId2 = UUID.randomUUID();
+        var productId1 = UUID.randomUUID();
+        var productId2 = UUID.randomUUID();
 
-        Category category = new Category();
+        var category = new Category();
         category.setId(UUID.randomUUID());
 
-        Product product1 = new Product();
+        var product1 = new Product();
         product1.setId(productId1);
         product1.setName("Product 1");
         product1.setLogoUrl("logo1");
         product1.setCategory(category);
 
-        Product product2 = new Product();
+        var product2 = new Product();
         product2.setId(productId2);
         product2.setName("Product 2");
         product2.setLogoUrl("logo2");
@@ -90,10 +81,8 @@ class ProductAsmTest {
 
         List<Product> products = Arrays.asList(product1, product2);
 
-        // When
         List<ProductSendDto> result = productAsm.toDto(products);
 
-        // Then
         assertNotNull(result);
         assertEquals(2, result.size());
 
@@ -112,8 +101,7 @@ class ProductAsmTest {
 
     @Test
     void testToDto_ListWithNullEntity() {
-        // Given
-        Product product = new Product();
+        var product = new Product();
         product.setId(UUID.randomUUID());
         product.setName("Product");
         product.setLogoUrl("logo");
@@ -128,7 +116,7 @@ class ProductAsmTest {
         assertNotNull(result);
         assertEquals(1, result.size());
 
-        ProductSendDto dto = result.get(0);
+        var dto = result.get(0);
         assertEquals(product.getId(), dto.getId());
         assertEquals(product.getName(), dto.getName());
         assertEquals(product.getLogoUrl(), dto.getLogoUrl());

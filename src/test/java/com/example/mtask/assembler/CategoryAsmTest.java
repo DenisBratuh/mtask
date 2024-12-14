@@ -1,6 +1,5 @@
 package com.example.mtask.assembler;
 
-import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.dto.product.ProductSendDto;
 import com.example.mtask.entity.Category;
 import com.example.mtask.entity.Product;
@@ -29,24 +28,21 @@ class CategoryAsmTest {
 
     @Test
     void testToDto() {
-        // Given
-        UUID categoryId = UUID.randomUUID();
-        String categoryName = "Test Category";
-        String logoUrl = "http://example.com/logo.png";
+        var categoryId = UUID.randomUUID();
+        var categoryName = "Test Category";
+        var logoUrl = "http://example.com/logo.png";
 
-        Category category = new Category();
+        var category = new Category();
         category.setId(categoryId);
         category.setName(categoryName);
         category.setLogoUrl(logoUrl);
         category.setProducts(List.of(new Product()));
 
-        List<ProductSendDto> productDtos = List.of(new ProductSendDto());
+        var productDtos = List.of(new ProductSendDto());
         when(productAsm.toDto(anyList())).thenReturn(productDtos);
 
-        // When
-        CategorySendDto result = categoryAsm.toDto(category);
+        var result = categoryAsm.toDto(category);
 
-        // Then
         assertNotNull(result);
         assertEquals(categoryId, result.getId());
         assertEquals(categoryName, result.getName());

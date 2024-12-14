@@ -10,20 +10,16 @@ class ImageUtilsTest {
 
     @Test
     void testCheckForImage_ValidImage() {
-        // Given
-        MockMultipartFile file = new MockMultipartFile("image", "image.png", "image/png", new byte[0]);
+        var file = new MockMultipartFile("image", "image.png", "image/png", new byte[0]);
 
-        // When & Then
         assertDoesNotThrow(() -> ImageUtils.checkForImage(file));
     }
 
     @Test
     void testCheckForImage_InvalidFileType() {
-        // Given
-        MockMultipartFile file = new MockMultipartFile("file", "text.txt", "text/plain", new byte[0]);
+        var file = new MockMultipartFile("file", "text.txt", "text/plain", new byte[0]);
 
-        // When & Then
-        IllegalArgumentException exception = assertThrows(
+        var exception = assertThrows(
             IllegalArgumentException.class, 
             () -> ImageUtils.checkForImage(file)
         );
@@ -32,31 +28,24 @@ class ImageUtilsTest {
 
     @Test
     void testGenerateObjectName_ValidInputs() {
-        // Given
-        MockMultipartFile file = new MockMultipartFile("image", "image.png", "image/png", new byte[0]);
-        LogoType logoType = LogoType.PRODUCT;
+        var file = new MockMultipartFile("image", "image.png", "image/png", new byte[0]);
 
-        // When
-        String objectName = ImageUtils.generateObjectName(file, logoType);
+        var objectName = ImageUtils.generateObjectName(file, LogoType.PRODUCT);
 
-        // Then
         assertTrue(objectName.startsWith("product/"));
         assertTrue(objectName.contains("image.png"));
     }
 
     @Test
     void testValidateArguments_ValidInputs() {
-        // Given
         String fileName = "file.png";
 
-        // When & Then
         assertDoesNotThrow(() -> ImageUtils.validateFileName(fileName));
     }
 
     @Test
     void testValidateArguments_NullFileName() {
-        // When & Then
-        IllegalArgumentException exception = assertThrows(
+        var exception = assertThrows(
             IllegalArgumentException.class, 
             () -> ImageUtils.validateFileName(null)
         );

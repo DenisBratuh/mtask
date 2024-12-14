@@ -6,12 +6,9 @@ import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.service.inteface.CategoryService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockMultipartFile;
@@ -28,7 +25,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@ExtendWith(MockitoExtension.class)
 @WebMvcTest(CategoryController.class)
 @Import(SecurityConfig.class)
 class CategoryControllerUnitTest {
@@ -42,7 +38,6 @@ class CategoryControllerUnitTest {
     @Test
     @WithMockUser(username = "regularUser")
     void testCreateCategory() throws Exception {
-        // Given
         var categorySendDto = new CategorySendDto();
         categorySendDto.setId(UUID.randomUUID());
         categorySendDto.setName("Test Category");
@@ -50,7 +45,6 @@ class CategoryControllerUnitTest {
         MockMultipartFile file = new MockMultipartFile("file", "test.jpg", MediaType.IMAGE_JPEG_VALUE, "test content".getBytes());
         when(categoryService.createCategory(any(CategoryRcvDto.class))).thenReturn(categorySendDto);
 
-        // When
         mockMvc.perform(multipart("/api/categories")
                         .file(file)
                         .param("name", "Test Category")
@@ -58,72 +52,60 @@ class CategoryControllerUnitTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("Test Category"));
 
-        // Then
         verify(categoryService, times(1)).createCategory(any(CategoryRcvDto.class));
     }
 
     @Test
     @WithMockUser(username = "regularUser")
     void testGetCategoryById() throws Exception {
-        // Given
         var categorySendDto = new CategorySendDto();
         categorySendDto.setId(UUID.randomUUID());
         categorySendDto.setName("Test Category");
 
         when(categoryService.getCategoryById(any(UUID.class))).thenReturn(categorySendDto);
 
-        // When
         mockMvc.perform(get("/api/categories/{id}", UUID.randomUUID())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("Test Category"));
 
-        // Then
         verify(categoryService, times(1)).getCategoryById(any(UUID.class));
     }
 
     @Test
     @WithMockUser(username = "regularUser")
     void testDeleteCategory() throws Exception {
-        // When
         mockMvc.perform(delete("/api/categories/{id}", UUID.randomUUID()))
                 .andExpect(status().isNoContent());
 
-        // Then
         verify(categoryService, times(1)).deleteCategory(any(UUID.class));
     }
 
     @Test
     @WithMockUser(username = "regularUser")
     void testGetPaginatedCategories() throws Exception {
-        // Given
-        Page<CategorySendDto> categoryPage = new PageImpl<>(List.of(new CategorySendDto()));
+        var categoryPage = new PageImpl<>(List.of(new CategorySendDto()));
         when(categoryService.getPaginatedCategories(anyInt(), anyInt())).thenReturn(categoryPage);
 
-        // When
         mockMvc.perform(get("/api/categories")
                         .param("page", "0")
                         .param("size", "10")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        // Then
         verify(categoryService, times(1)).getPaginatedCategories(anyInt(), anyInt());
     }
 
     @Test
     @WithMockUser(username = "regularUser")
     void testGetCategoryLogo() throws Exception {
-        // Given
         when(categoryService.getCategoryLogo(any(UUID.class))).thenReturn("test image content".getBytes());
 
-        // When
         mockMvc.perform(get("/api/categories/{id}/logo", UUID.randomUUID())
                         .accept(MediaType.IMAGE_JPEG_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.IMAGE_JPEG_VALUE));
 
-        // Then
         verify(categoryService, times(1)).getCategoryLogo(any(UUID.class));
     }
 
@@ -141,7 +123,6 @@ class CategoryControllerUnitTest {
     @Test
     @WithMockUser(username = "regularUser")
     void testCreateCategoryWithInvalidFileType() throws Exception {
-        // Given
         MockMultipartFile invalidFile = new MockMultipartFile(
                 "file",
                 "not_an_image.txt",
@@ -152,7 +133,6 @@ class CategoryControllerUnitTest {
         doThrow(new IllegalArgumentException("Only image files are allowed"))
                 .when(categoryService).createCategory(any(CategoryRcvDto.class));
 
-        // When & Then
         mockMvc.perform(multipart("/api/categories")
                         .file(invalidFile)
                         .param("name", "Test Category")
