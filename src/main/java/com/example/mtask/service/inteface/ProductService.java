@@ -34,12 +34,13 @@ public interface ProductService {
      */
     ProductSendDto getProductDtoById(UUID id);
 
-    //TODO update
     /**
      * Updates an existing product with new details.
      *
      * @param id          the UUID of the product to update
+     * @param updateDto   the {@link ProductUpdateDto} containing the updated product details
      * @return a {@link ProductSendDto} containing the updated product's details
+     * @throws jakarta.persistence.EntityNotFoundException if the product or category with the given ID does not exist
      */
     ProductSendDto updateProduct(UUID id, ProductUpdateDto updateDto);
 
