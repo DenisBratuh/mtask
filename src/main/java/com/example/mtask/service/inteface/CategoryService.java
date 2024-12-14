@@ -23,6 +23,7 @@ public interface CategoryService {
      */
     CategorySendDto createCategory(CategoryRcvDto dto);
 
+    //TODO THROWS!!!
     /**
      * Retrieves the details of a category by its ID.
      *

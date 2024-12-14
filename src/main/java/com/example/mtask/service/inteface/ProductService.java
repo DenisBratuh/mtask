@@ -17,10 +17,10 @@ import java.util.UUID;
  */
 public interface ProductService {
 
-    //TODO update
     /**
      * Creates a new product with the specified details.
      *
+     * @param dto a {@link ProductCreateDto} containing the details of the product to be created
      * @return a {@link ProductSendDto} containing the details of the created product
      */
     ProductSendDto createProduct(ProductCreateDto dto);
@@ -30,7 +30,7 @@ public interface ProductService {
      *
      * @param id the UUID of the product
      * @return a {@link ProductSendDto} containing the product's details
-     * @throws RuntimeException if the product with the specified ID is not found
+     * @throws jakarta.persistence.EntityNotFoundException if the product with the specified ID is not found
      */
     ProductSendDto getProductDtoById(UUID id);
 

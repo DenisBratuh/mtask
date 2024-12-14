@@ -16,6 +16,8 @@ public interface CategoryRepository extends JpaRepository<Category, UUID> {
     @NotNull
     Optional<Category> findById(@NotNull UUID id);
 
+    Optional<Category> findByName(String name);
+
     @NotNull
     Page<Category> findAll(@NotNull Pageable pageable);
 }

@@ -64,7 +64,7 @@ public class CategoryServiceImp implements CategoryService {
     @Transactional
     public void deleteCategory(UUID id) {
         var category = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Category not found with id " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with id " + id));
 
         if (category.getLogoUrl() != null) {
             minioService.deleteImage(category.getLogoUrl());
@@ -83,7 +83,7 @@ public class CategoryServiceImp implements CategoryService {
 
     @Transactional(readOnly = true)
     public byte[] getCategoryLogo(UUID categoryId) {
-        var logoPath = getCategoryById(categoryId).getLogoUrl();
+        var logoPath = getCategoryByIdInternal(categoryId).getLogoUrl();
 
         if (logoPath == null || logoPath.isEmpty()) {
             return new byte[0];

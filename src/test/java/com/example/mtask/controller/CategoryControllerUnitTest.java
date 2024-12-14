@@ -127,7 +127,8 @@ class CategoryControllerUnitTest {
         mockMvc.perform(get(BASE_URL + "/{id}", TEST_UUID)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Category not found"));
+                .andExpect(jsonPath("$.message").value("Category not found"))
+                .andExpect(jsonPath("$.error").value("Entity Not Found"));
     }
 
     @Test
@@ -148,6 +149,7 @@ class CategoryControllerUnitTest {
                         .param("name", TEST_CATEGORY_NAME)
                         .contentType(MediaType.MULTIPART_FORM_DATA))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Only image files are allowed"));
+                .andExpect(jsonPath("$.message").value("Only image files are allowed"))
+                .andExpect(jsonPath("$.error").value("Bad Request"));
     }
 }

@@ -50,4 +50,12 @@ public class CategorySendDto {
     public List<ProductSendDto> getProductDtoList() {
         return productSendDtoList;
     }
+
+    public void setProductSendDtoList(List<ProductSendDto> productSendDtoList) {
+        this.productSendDtoList = productSendDtoList;
+    }
+
+    public List<ProductSendDto> getProductSendDtoList() {
+        return productSendDtoList;
+    }
 }

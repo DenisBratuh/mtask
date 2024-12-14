@@ -7,6 +7,7 @@ import com.example.mtask.entity.Product;
 import com.example.mtask.assembler.ProductAsm;
 import com.example.mtask.repository.ProductRepository;
 import com.example.mtask.service.inteface.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class ProductServiceImp implements ProductService {
 
     private Product getProductById(UUID id) {
         return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found with id: " + id));
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with id: " + id));
     }
 
     @Override

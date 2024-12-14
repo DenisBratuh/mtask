@@ -25,6 +25,16 @@ public class Product {
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
+    public Product() {
+    }
+
+    public Product(UUID id, String name, String logoUrl, @NotNull Category category) {
+        this.id = id;
+        this.name = name;
+        this.logoUrl = logoUrl;
+        this.category = category;
+    }
+
     public UUID getId() {
         return id;
     }
