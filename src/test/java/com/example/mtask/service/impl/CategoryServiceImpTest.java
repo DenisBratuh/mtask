@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.example.mtask.entity.LogoType.CATEGORY;
+import static com.example.mtask.enums.LogoType.CATEGORY;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -111,7 +111,7 @@ class CategoryServiceImpTest {
         categoryServiceImp.deleteCategory(id);
 
         // Then
-        verify(minioService, times(1)).deleteImage(eq("logoPath"), any());
+        verify(minioService, times(1)).deleteImage(eq("logoPath"));
         verify(categoryRepository, times(1)).delete(category);
     }
 
@@ -128,7 +128,7 @@ class CategoryServiceImpTest {
         categoryServiceImp.deleteCategory(id);
 
         // Then
-        verify(minioService, never()).deleteImage(anyString(), any());
+        verify(minioService, never()).deleteImage(anyString());
         verify(categoryRepository, times(1)).delete(category);
     }
 
@@ -165,7 +165,7 @@ class CategoryServiceImpTest {
         categorySendDto.setLogoUrl("logoPath");
         when(categoryAsm.toDto(any(Category.class))).thenReturn(categorySendDto);
 
-        when(minioService.downloadImage(eq("logoPath"), any())).thenReturn(new byte[]{1, 2, 3});
+        when(minioService.downloadImage(eq("logoPath"))).thenReturn(new byte[]{1, 2, 3});
 
         // When
         byte[] result = categoryServiceImp.getCategoryLogo(id);
@@ -173,7 +173,7 @@ class CategoryServiceImpTest {
         // Then
         assertNotNull(result);
         assertEquals(3, result.length);
-        verify(minioService, times(1)).downloadImage(eq("logoPath"), any());
+        verify(minioService, times(1)).downloadImage(eq("logoPath"));
     }
 
     @Test
@@ -192,6 +192,6 @@ class CategoryServiceImpTest {
         // Then
         assertNotNull(result);
         assertEquals(0, result.length);
-        verify(minioService, never()).downloadImage(anyString(), any());
+        verify(minioService, never()).downloadImage(anyString());
     }
 }

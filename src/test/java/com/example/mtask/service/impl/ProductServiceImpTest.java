@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.example.mtask.entity.LogoType.PRODUCT;
+import static com.example.mtask.enums.LogoType.PRODUCT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -135,7 +135,7 @@ class ProductServiceImpTest {
         productServiceImp.deleteProduct(productId);
 
         // Then
-        verify(minioService, times(1)).deleteImage(eq("logoPath"), any());
+        verify(minioService, times(1)).deleteImage(eq("logoPath"));
         verify(productRepository, times(1)).delete(product);
     }
 

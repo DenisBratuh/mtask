@@ -2,7 +2,7 @@ package com.example.mtask.utils;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.example.mtask.entity.LogoType;
+import com.example.mtask.enums.LogoType;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockMultipartFile;
 
@@ -48,10 +48,9 @@ class ImageUtilsTest {
     void testValidateArguments_ValidInputs() {
         // Given
         String fileName = "file.png";
-        LogoType logoType = LogoType.CATEGORY;
 
         // When & Then
-        assertDoesNotThrow(() -> ImageUtils.validateArguments(fileName, logoType));
+        assertDoesNotThrow(() -> ImageUtils.validateFileName(fileName));
     }
 
     @Test
@@ -59,18 +58,8 @@ class ImageUtilsTest {
         // When & Then
         IllegalArgumentException exception = assertThrows(
             IllegalArgumentException.class, 
-            () -> ImageUtils.validateArguments(null, LogoType.CATEGORY)
+            () -> ImageUtils.validateFileName(null)
         );
         assertEquals("File name cannot be null or empty.", exception.getMessage());
-    }
-
-    @Test
-    void testValidateArguments_NullLogoType() {
-        // When & Then
-        IllegalArgumentException exception = assertThrows(
-            IllegalArgumentException.class, 
-            () -> ImageUtils.validateArguments("file.png", null)
-        );
-        assertEquals("Logo type cannot be null.", exception.getMessage());
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.UUID;
 
-import static com.example.mtask.entity.LogoType.PRODUCT;
+import static com.example.mtask.enums.LogoType.PRODUCT;
 
 @Service
 public class ProductServiceImp implements ProductService {
@@ -86,7 +86,7 @@ public class ProductServiceImp implements ProductService {
         var product = getProductById(id);
 
         if (product.getLogoUrl() != null) {
-            minioService.deleteImage(product.getLogoUrl(), PRODUCT);
+            minioService.deleteImage(product.getLogoUrl());
         }
 
         productRepository.delete(product);
@@ -100,7 +100,7 @@ public class ProductServiceImp implements ProductService {
             return new byte[0];
         }
 
-        return minioService.downloadImage(product.getLogoUrl(), PRODUCT);
+        return minioService.downloadImage(product.getLogoUrl());
     }
 
     @Override
@@ -155,7 +155,7 @@ public class ProductServiceImp implements ProductService {
 
     private void deleteLogoIfPresent(Product product) {
         if (product.getLogoUrl() != null) {
-            minioService.deleteImage(product.getLogoUrl(), PRODUCT);
+            minioService.deleteImage(product.getLogoUrl());
             product.setLogoUrl(null);
         }
     }

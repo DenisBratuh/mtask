@@ -1,6 +1,5 @@
-package com.example.mtask.controller;
+package com.example.mtask.exception;
 
-import com.example.mtask.exceptions.MinioOperationException;
 import jakarta.persistence.EntityNotFoundException;
 import org.apache.tomcat.util.http.fileupload.impl.SizeLimitExceededException;
 import org.springframework.http.HttpStatus;

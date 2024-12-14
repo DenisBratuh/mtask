@@ -1,7 +1,7 @@
 package com.example.mtask.service.impl;
 
-import com.example.mtask.entity.LogoType;
-import com.example.mtask.exceptions.MinioOperationException;
+import com.example.mtask.enums.LogoType;
+import com.example.mtask.exception.MinioOperationException;
 import com.example.mtask.service.imp.MinioService;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
@@ -66,41 +66,13 @@ class MinioServiceTest {
         assertTrue(exception.getMessage().contains("Error during uploading logo image to MinIO"));
     }
 
-    //TODO ?
-//    @Test
-//    void testDownloadImageSuccess() throws Exception {
-//        byte[] expectedBytes = {1, 2, 3, 4, 5};
-//        InputStream objectStream = new ByteArrayInputStream(expectedBytes);
-//
-//        // Mock the minioClient to return the mocked InputStream
-//        GetObjectResponse response = mock(GetObjectResponse.class);
-//        when(response.read(Mockito.any(byte[].class))).thenAnswer(
-//
-//        when(minioClient.getObject(Mockito.any(GetObjectArgs.class))).then(invocation -> {
-//            GetObjectArgs getObjectRequest = invocation.getArgument(0);
-//            assertEquals("test-bucket", getObjectRequest.bucket());
-//            assertEquals(IMAGE_PATH, getObjectRequest.object());
-//
-//            return new ResponseInputStream<>(
-//                    GetObjectResponse.builder().build(), AbortableInputStream.create(objectStream));
-//        });
-//
-//        // Act: Call the downloadImage method
-//        byte[] result = minioService.downloadImage(IMAGE_PATH, LogoType.PRODUCT);
-//
-//        // Assert: Ensure the result is as expected
-//        assertArrayEquals(expectedBytes, result);
-//        verify(minioClient, times(1)).getObject(any(GetObjectArgs.class));
-//    }
-
     @Test
     void testDownloadImageFailure() throws Exception {
         String imagePath = "test.jpg";
-        LogoType logoType = LogoType.PRODUCT;
 
         doThrow(new MinioOperationException("Error occurred while downloading the logo from MinIO", new RuntimeException())).when(minioClient).getObject(any(GetObjectArgs.class));
 
-        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.downloadImage(imagePath, logoType));
+        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.downloadImage(imagePath));
 
         assertTrue(exception.getMessage().contains("Error occurred while downloading the logo from MinIO"));
     }
@@ -108,9 +80,8 @@ class MinioServiceTest {
     @Test
     void testDeleteImageSuccess() throws ServerException, InsufficientDataException, ErrorResponseException, IOException, NoSuchAlgorithmException, InvalidKeyException, InvalidResponseException, XmlParserException, InternalException {
         String fileName = "test.jpg";
-        LogoType logoType = LogoType.CATEGORY;
 
-        assertDoesNotThrow(() -> minioService.deleteImage(fileName, logoType));
+        assertDoesNotThrow(() -> minioService.deleteImage(fileName));
         verify(minioClient, times(1)).removeObject(any(RemoveObjectArgs.class));
     }
 
@@ -120,7 +91,7 @@ class MinioServiceTest {
 
         doThrow(new MinioOperationException("Error occurred while deleting logo file", new RuntimeException())).when(minioClient).removeObject(any(RemoveObjectArgs.class));
 
-        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.deleteImage(fileName, LogoType.PRODUCT));
+        MinioOperationException exception = assertThrows(MinioOperationException.class, () -> minioService.deleteImage(fileName));
 
         assertTrue(exception.getMessage().contains("Error occurred while deleting logo file"));
     }

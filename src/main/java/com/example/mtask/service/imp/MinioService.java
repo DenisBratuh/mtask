@@ -1,7 +1,7 @@
 package com.example.mtask.service.imp;
 
-import com.example.mtask.entity.LogoType;
-import com.example.mtask.exceptions.MinioOperationException;
+import com.example.mtask.enums.LogoType;
+import com.example.mtask.exception.MinioOperationException;
 import com.example.mtask.service.inteface.ImageStorageService;
 import com.example.mtask.utils.ImageUtils;
 import io.minio.*;
@@ -62,8 +62,8 @@ public class MinioService implements ImageStorageService {
     }
 
     @Override
-    public void deleteImage(String fileName, LogoType logoType) {
-        ImageUtils.validateArguments(fileName, logoType);
+    public void deleteImage(String fileName) {
+        ImageUtils.validateFileName(fileName);
 
         try {
             minioClient.removeObject(
@@ -77,7 +77,7 @@ public class MinioService implements ImageStorageService {
     }
 
     @Override
-    public byte[] downloadImage(String imagePath, LogoType logoType) {
+    public byte[] downloadImage(String imagePath) {
         try (
                 GetObjectResponse inputStream = minioClient.getObject(
                 GetObjectArgs.builder()

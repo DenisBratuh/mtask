@@ -1,9 +1,9 @@
 package com.example.mtask.service.imp;
 
+import com.example.mtask.assembler.CategoryAsm;
 import com.example.mtask.dto.category.CategoryRcvDto;
 import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.entity.Category;
-import com.example.mtask.assembler.CategoryAsm;
 import com.example.mtask.repository.CategoryRepository;
 import com.example.mtask.service.inteface.CategoryService;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,14 +15,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.example.mtask.entity.LogoType.CATEGORY;
-import static com.example.mtask.entity.LogoType.PRODUCT;
+import static com.example.mtask.enums.LogoType.CATEGORY;
 
 @Service
 public class CategoryServiceImp implements CategoryService {
 
-    private final CategoryRepository repository;
     private final CategoryAsm asm;
+    private final CategoryRepository repository;
     private final MinioService minioService;
 
     @Autowired
@@ -68,7 +67,7 @@ public class CategoryServiceImp implements CategoryService {
                 .orElseThrow(() -> new RuntimeException("Category not found with id " + id));
 
         if (category.getLogoUrl() != null) {
-            minioService.deleteImage(category.getLogoUrl(), PRODUCT);
+            minioService.deleteImage(category.getLogoUrl());
         }
 
         repository.delete(category);
@@ -90,7 +89,7 @@ public class CategoryServiceImp implements CategoryService {
             return new byte[0];
         }
 
-        return minioService.downloadImage(logoPath, CATEGORY);
+        return minioService.downloadImage(logoPath);
     }
 
     private Category getCategoryByIdInternal(UUID id) {

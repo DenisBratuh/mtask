@@ -1,4 +1,4 @@
-package com.example.mtask.exceptions;
+package com.example.mtask.exception;
 
 /**
  * Exception thrown for any errors related to MinIO operations.

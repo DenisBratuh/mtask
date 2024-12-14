@@ -15,9 +15,8 @@ import java.util.UUID;
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     List<Product> findByNameContainingIgnoreCase(String name);
-    List<Product> findByCategoryName(String name);
 
-    List<Product> findByCategoryId(UUID categoryId);
+    List<Product> findByCategoryName(String name);
 
     @Query("SELECT DISTINCT p.name FROM Product p")
     List<String> findDistinctProductNames();
