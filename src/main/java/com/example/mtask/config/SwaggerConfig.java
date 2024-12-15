@@ -8,9 +8,22 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configuration class for Swagger/OpenAPI documentation.
+ */
 @Configuration
 public class SwaggerConfig {
 
+    /**
+     * Configures and provides an {@link OpenAPI} bean for API documentation.
+     * <p>
+     * - Defines the API title and version.<br>
+     * - Adds a basic authentication security scheme to secure API endpoints.<br>
+     * - Associates the security scheme with the API documentation.
+     * </p>
+     *
+     * @return a customized {@link OpenAPI} instance for the application's API documentation
+     */
     @Bean
     public OpenAPI customOpenAPI() {
         final String securitySchemeName = "basicAuth";

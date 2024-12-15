@@ -1,4 +1,4 @@
-package com.example.mtask.service.impl;
+package com.example.mtask.service.imp;
 
 import com.example.mtask.assembler.ProductAsm;
 import com.example.mtask.dto.product.ProductCreateDto;
@@ -7,9 +7,6 @@ import com.example.mtask.dto.product.ProductUpdateDto;
 import com.example.mtask.entity.Category;
 import com.example.mtask.entity.Product;
 import com.example.mtask.repository.ProductRepository;
-import com.example.mtask.service.imp.CategoryServiceImp;
-import com.example.mtask.service.imp.MinioService;
-import com.example.mtask.service.imp.ProductServiceImp;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

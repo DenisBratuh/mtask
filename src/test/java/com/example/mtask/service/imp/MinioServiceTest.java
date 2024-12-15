@@ -1,8 +1,7 @@
-package com.example.mtask.service.impl;
+package com.example.mtask.service.imp;
 
 import com.example.mtask.enums.LogoType;
 import com.example.mtask.exception.MinioOperationException;
-import com.example.mtask.service.imp.MinioService;
 import io.minio.GetObjectArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;

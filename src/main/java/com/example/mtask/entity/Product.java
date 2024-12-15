@@ -14,7 +14,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "name")
+    @Column(name = "name", nullable = false)
     private String name;
 
     @Column(name = "logo_url")
@@ -28,7 +28,7 @@ public class Product {
     public Product() {
     }
 
-    public Product(UUID id, String name, String logoUrl, @NotNull Category category) {
+    public Product(UUID id, @NotNull String name, String logoUrl, @NotNull Category category) {
         this.id = id;
         this.name = name;
         this.logoUrl = logoUrl;
@@ -43,11 +43,12 @@ public class Product {
         this.id = id;
     }
 
+    @NotNull
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(@NotNull String name) {
         this.name = name;
     }
 

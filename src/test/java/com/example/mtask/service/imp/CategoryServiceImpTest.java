@@ -1,12 +1,10 @@
-package com.example.mtask.service.impl;
+package com.example.mtask.service.imp;
 
 import com.example.mtask.assembler.CategoryAsm;
 import com.example.mtask.dto.category.CategoryRcvDto;
 import com.example.mtask.dto.category.CategorySendDto;
 import com.example.mtask.entity.Category;
 import com.example.mtask.repository.CategoryRepository;
-import com.example.mtask.service.imp.CategoryServiceImp;
-import com.example.mtask.service.imp.MinioService;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

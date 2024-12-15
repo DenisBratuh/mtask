@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * A utility class for transforming {@link Product} entities into {@link ProductSendDto} data transfer objects.
+ */
 @Component
 public class ProductAsm {
 

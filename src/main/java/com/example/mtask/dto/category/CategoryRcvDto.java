@@ -1,9 +1,13 @@
 package com.example.mtask.dto.category;
 
+import jakarta.validation.constraints.NotNull;
 import org.springframework.web.multipart.MultipartFile;
 
 public class CategoryRcvDto {
+
+    @NotNull
     private String name;
+
     private MultipartFile file;
 
     public String getName() {

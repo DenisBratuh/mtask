@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class ProductController {
     @Operation(summary = "Create a new product", description = "Creates a new product and optionally uploads a logo.")
     @ApiResponse(responseCode = "201", description = "Product created successfully",
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ProductSendDto.class)))
-    public ResponseEntity<ProductSendDto> createProduct(@ModelAttribute ProductCreateDto dto) {
+    public ResponseEntity<ProductSendDto> createProduct(@Valid @ModelAttribute ProductCreateDto dto) {
         var product = service.createProduct(dto);
         return new ResponseEntity<>(product, HttpStatus.CREATED);
     }

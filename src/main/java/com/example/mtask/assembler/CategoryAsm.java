@@ -5,6 +5,12 @@ import com.example.mtask.entity.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+/**
+ * A utility class responsible for transforming {@link Category} entities into {@link CategorySendDto} data transfer objects.
+ * <p>
+ * This class uses the {@link ProductAsm} to convert the list of products associated with a category.
+ * </p>
+ */
 @Component
 public class CategoryAsm {
 

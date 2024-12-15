@@ -16,11 +16,26 @@ import org.springframework.security.web.SecurityFilterChain;
 
 import java.util.List;
 
+/**
+ * Configuration class for Spring Security settings.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
 
+    /**
+     * Configures the security filter chain for HTTP requests.
+     * <p>
+     * - Disables CSRF protection.<br>
+     * - Allows unrestricted access to Swagger and API documentation endpoints.<br>
+     * - Requires authentication for all other endpoints.<br>
+     * - Enables HTTP Basic authentication.
+     * </p>
+     *
+     * @param http the {@link HttpSecurity} to configure
+     * @return a {@link SecurityFilterChain} instance
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -33,11 +48,25 @@ public class SecurityConfig {
         return http.build();
     }
 
+    /**
+     * Provides a password encoder bean for encoding and validating user passwords.
+     *
+     * @return a {@link PasswordEncoder} instance
+     */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * Configures an in-memory user details service with predefined users.
+     * <p>
+     * - Defines two users: `regularUser` with role `USER` and `editorUser` with role `EDITOR`.<br>
+     * - Passwords are hashed using the {@link PasswordEncoder}.
+     * </p>
+     *
+     * @return a {@link UserDetailsService} instance containing the configured users
+     */
     @Bean
     public UserDetailsService userDetailsService() {
         var regularUser =
