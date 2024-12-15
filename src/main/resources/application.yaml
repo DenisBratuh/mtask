@@ -1,1 +1,26 @@
+server:
+  port: 8081
+spring:
+  profiles:
+    active: dev
+  datasource:
+    url: jdbc:postgresql://localhost:/m_task
+    username:
+    password:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 1MB
+minio:
+  endpoint:
+  access-key:
+  secret-key:
+  default-bucket:
 

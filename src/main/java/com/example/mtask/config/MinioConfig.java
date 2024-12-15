@@ -4,6 +4,7 @@ import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * Configuration class for initializing and setting up the MinIO client.
@@ -14,6 +15,7 @@ import org.springframework.context.annotation.Configuration;
  * </p>
  */
 @Configuration
+@Profile("!test")
 public class MinioConfig {
 
     @Value("${minio.endpoint}")

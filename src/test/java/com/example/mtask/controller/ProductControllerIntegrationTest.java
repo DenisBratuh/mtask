@@ -1,5 +1,6 @@
 package com.example.mtask.controller;
 
+import com.example.mtask.config.MinioTestConfig;
 import com.example.mtask.dto.product.ProductSendDto;
 import com.example.mtask.entity.Product;
 import com.example.mtask.entity.Category;
@@ -12,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,6 +30,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
+@Import(MinioTestConfig.class)
 class ProductControllerIntegrationTest {
 
     @LocalServerPort
