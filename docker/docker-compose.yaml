@@ -25,7 +25,7 @@ services:
     environment:
       POSTGRES_USER: mtask_user
       POSTGRES_PASSWORD: mtask_password
-      POSTGRES_DB: m-task
+      POSTGRES_DB: m_task
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
