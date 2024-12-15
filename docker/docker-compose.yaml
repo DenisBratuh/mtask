@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # MinIO
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio-test
+    ports:
+      - "9100:9000"
+      - "9101:9001"
+    environment:
+      MINIO_ROOT_USER: TESTUSER
+      MINIO_ROOT_PASSWORD: TESTPASSWORD
+    command: server /data --console-address ":9001"
+    volumes:
+      - ./minio/test/data:/data
+      - ./minio/test/config:/root/.minio
+
+  # PostgreSQL
+  postgres:
+    image: postgres:15.3
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: mtask_user
+      POSTGRES_PASSWORD: mtask_password
+      POSTGRES_DB: m-task
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
