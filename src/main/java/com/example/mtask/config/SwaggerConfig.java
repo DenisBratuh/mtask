@@ -29,7 +29,12 @@ public class SwaggerConfig {
         final String securitySchemeName = "basicAuth";
 
         return new OpenAPI()
-                .info(new Info().title("Product and Category API").version("1.0"))
+                .info(new Info().title("Product and Category API")
+                        .version("1.0")
+                        .description("**Important**: For file fields, do not check the 'Send empty value' checkbox "
+                                + "if no file is being uploaded. Leaving the field empty without marking the checkbox "
+                                + "is the correct way to indicate no file upload.")
+                )
                 .addSecurityItem(new SecurityRequirement().addList(securitySchemeName))
                 .components(new Components()
                         .addSecuritySchemes(securitySchemeName,
